@@ -17,3 +17,7 @@ class StreamingCreateView(FormView):
         form.save(commit=True)
         return super(StreamingCreateView, self).form_valid(form)
 streamingCreateView = StreamingCreateView.as_view()
+
+class StreamingView(django.views.generic.TemplateView):
+    template_name = "streaming.html"
+streamingView = StreamingView.as_view()

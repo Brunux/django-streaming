@@ -2,11 +2,12 @@
 
 {% block content %}
 <div class="page-header">
-    <h1 >Virtuososcode Streaming App</h1><br>
+    <h1 class="logo-header">Virtuososcode Streaming App</h1><br>
     <h5>Servicio gratuito de streaming para meetups. Si te interesa saber como funciona tecnicamente nuestro streaming <a href="#">aquí</a> lo explicamos,
      si lo prefieres puedes ver nuestro repo en <a href="https://github.com/Brunux/vc-streaming-app">GitHub</a></h5>
     </div>
-    <form class="form-horizontal well">
+    <form class="form-horizontal well" method="post" action="{% url 'streaming' %}">
+    {% csrf_token %}
     <div class="form-group">
       <label for="inputStreamingId" class="col-sm-2 control-label">Streaming ID </label>
       <div class="col-sm-4">
@@ -31,4 +32,6 @@
       </div>
     </div>
     </form>
+    <p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
+        Si tienes alguna duda puedes escribir a <a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
 {% endblock %}

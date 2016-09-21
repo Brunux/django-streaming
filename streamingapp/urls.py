@@ -7,4 +7,5 @@ urlpatterns = [
     # Make sure to update the references if you change or delete this url line!
     url(r"^$", views.home, name="home"),
     url(r"^create-streaming/$", views.streamingCreateView, name="create-streaming"),
+    url(r"^streaming/$", views.streamingView, name="streaming"),
 ]

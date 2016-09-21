@@ -1,9 +1,19 @@
 .logo {
 	color:  #ffffff;
-	font: normal 36px 'Cookie', cursive;
+	font: normal 40px 'Cookie', cursive;
 	margin: 0;
 }
 
 .logo span{
 	color:  #5383d3;
+}
+
+.logo-header {
+	font: normal 48px 'Cookie', cursive;
+	margin: 0;
+	color: #292c2f;
+}
+
+.paggind-off {
+	padding: 0 0 0 0;
 }
