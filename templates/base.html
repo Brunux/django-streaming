@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap-theme.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer-distributed-with-address-and-phones.css' %}">
     <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href='https://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
     {% block header %}{% endblock %}
 </head>
@@ -15,12 +16,12 @@
 
 <nav class="navbar navbar-inverse">
     <div class="container">
-        <div class="navbar-header">
+        <div class="navbar-header logo">
             <a class="navbar-brand" href="{% url 'home' %}">
-                VC-Streaming-app
+                <big><span>VC</span> Streaming-app</big>
             </a>
         </div>
-        <a href="#"><button type="button" class="navbar-right btn btn-success navbar-btn">Crear Streaming</button></a>
+        <a href="{% url 'create-streaming' %}"><button type="button" class="navbar-right btn btn-primary navbar-btn">Crear Streaming</button></a>
         {% if request.user.is_authenticated %}
         <p class="navbar-text navbar-right">
         Logged in as {{ request.user }}
