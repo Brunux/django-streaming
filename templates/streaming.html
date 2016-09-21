@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="panel panel-success col-md-8">
+    <div class="panel-heading">Streaming</div>
+    <div class="panel-body">
+      <div class="embed-responsive embed-responsive-16by9">
+        Panel content
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-info col-md-4">
+    <div class="panel-heading">Chat</div>
+    <div class="panel-body">
+      <div class="embed-responsive embed-responsive-4by3">
+        Panel content
+      </div>
+    </div>
+    <div class="panel-footer">
+      <div class="row">
+        <div class="container-fluid">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Preguntas?">
+            <span class="input-group-btn">
+              <button class="btn btn-info" type="button">Enviar</button>
+            </span>
+          </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

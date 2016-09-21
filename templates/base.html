@@ -3,9 +3,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Project Title{% endblock %}</title>
+    <title>{% block title %}VirtuososCode Streaming web app{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer-distributed-with-address-and-phones.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link href='https://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
     {% block header %}{% endblock %}
 </head>
 <body>
@@ -14,9 +17,10 @@
     <div class="container">
         <div class="navbar-header">
             <a class="navbar-brand" href="{% url 'home' %}">
-                Project Title
+                VC-Streaming-app
             </a>
         </div>
+        <a href="#"><button type="button" class="navbar-right btn btn-success navbar-btn">Crear Streaming</button></a>
         {% if request.user.is_authenticated %}
         <p class="navbar-text navbar-right">
         Logged in as {{ request.user }}
@@ -43,10 +47,58 @@
     {% block content %}{% endblock %}
 </div>
 
+{% block footer %}
+<footer class="footer-distributed">
+	<div class="footer-left">
+		<h3>virtuosos<span>code</span></h3>
+		<p class="footer-links">
+			<a href="https://virtuososcode.com">Home</a>
+			·
+			<a href="https://virtuososcode.com/team">El equipo</a>
+			·
+			<a href="https://virtuososcode.com/services">Servicios</a>
+			·
+			<a href="https://git.virtuososcode.com">Git</a>
+			·
+			<a href="https://virtuososcode.com/vacantes">Vacantes</a>
+		</p>
+		<p class="footer-company-name">virtuososcode &copy; 2016</p>
+	</div>
+	<div class="footer-center">
+		<div>
+			<i class="fa fa-map-marker"></i>
+			<p><span>21 Revolution Street</span> Guadalajara, Jalisco</p>
+		</div>
+		<div>
+			<i class="fa fa-phone"></i>
+			<p>+521 3319441828</p>
+		</div>
+		<div>
+			<i class="fa fa-envelope"></i>
+			<p><a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a></p>
+		</div>
+	</div>
+	<div class="footer-right">
+		<p class="footer-company-about">
+			<span>Acerca de nosotros</span>
+			VirtuososCode es un grupo de desarolladores fullstack, proporcionamos a nuestros clientes soluciones profecionales
+			en software usando tecnologias estables y de alto rendimiento.
+		</p>
+		<div class="footer-icons">
+			<a href="#"><i class="fa fa-facebook"></i></a>
+			<a href="#"><i class="fa fa-twitter"></i></a>
+			<a href="#"><i class="fa fa-linkedin"></i></a>
+			<a href="#"><i class="fa fa-github"></i></a>
+		</div>
+	</div>
+</footer>
+{% endblock %}
+
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
 {% block scripts %}{% endblock %}
+
 
 </body>
 </html>

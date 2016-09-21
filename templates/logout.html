@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <p>You are now logged out</p>
-    <p><a href="{% url 'login' %}">Log in again</a></p>
+    <div class="alert alert-success" role="alert">Tu sessisón con virtuososcode ha finalizado, regresa pronto!</div>
+    <a href="{% url 'login' %}"><button type="button" class="btn btn-primary">Iniciar sesión nuevamente</button></a>
 {% endblock %}
