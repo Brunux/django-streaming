@@ -6,4 +6,5 @@ from .models import Streaming
 class StreamingForm(forms.ModelForm):
     class Meta:
         model = Streaming
-        fields = ['user_email', 'name', 'date', 'time', 'uuid', 'info']
+        fields = ['title', 'date', 'time', 'info']
+        # Check Streaming model for all the fields needed to save the form

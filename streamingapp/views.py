@@ -14,6 +14,7 @@ class StreamingCreateView(FormView):
     def form_valid(self, form):
     # This method is called when valid form data has been POSTed.
     # It should return an HttpResponse.
+    # Check StreamingForm to set manually user_email and uuid fields
         form.save(commit=True)
         return super(StreamingCreateView, self).form_valid(form)
 streamingCreateView = StreamingCreateView.as_view()
