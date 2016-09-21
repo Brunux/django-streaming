@@ -14,6 +14,6 @@ class Streaming(models.Model):
     def __str__(self):
         return self.title
 
-#import uuid, datetime
-#from streamingapp.models import Streaming
-#stm = Streaming(user_email='bruno@virtuososcode.com', title='Meetup 12', date=datetime.date.today(), time=datetime.time(), uuid=uuid.uuid4(), info='Este es un streaming de prueba')
+# import uuid, datetime
+# from streamingapp.models import Streaming
+# stm = Streaming(user_email='bruno@virtuososcode.com', title='Meetup 12', date=datetime.date.today(), time=datetime.time(), uuid=uuid.uuid4(), info='Este es un streaming de prueba')

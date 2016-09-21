@@ -2,36 +2,58 @@
 
 {% block content %}
 <div class="page-header">
-    <h1 class="logo-header">Virtuososcode Streaming App</h1><br>
+    <h1 class="logo-header logo"><span>Virtuososcode</span> Streaming App</h1><br>
     <h5>Servicio gratuito de streaming para meetups. Si te interesa saber como funciona tecnicamente nuestro streaming <a href="#">aquí</a> lo explicamos,
      si lo prefieres puedes ver nuestro repo en <a href="https://github.com/Brunux/vc-streaming-app">GitHub</a></h5>
     </div>
-    <form class="form-horizontal well" method="post" action="{% url 'streaming' %}">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="inputStreamingId" class="col-sm-2 control-label">Streaming ID </label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" id="inputStreamingId" placeholder="q45ews6a675">
+    <div class="row well">
+      <div class="col-md-6">
+        <form class="form-horizontal" method="post" action="{% url 'streaming' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="inputStreamingId" class="col-sm-4 control-label">Streaming ID </label>
+          <div class="col-sm-6">
+            <input type="text" class="form-control" id="inputStreamingId" placeholder="q45ews6a675">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail" class="col-sm-4 control-label">Tu Email </label>
+          <div class="col-sm-6">
+            <input type="email" class="form-control" id="inputEmail" placeholder="juan.perez@virtuososcode.com ">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputName" class="col-sm-4 control-label">Tu nombre </label>
+          <div class="col-sm-6">
+            <input  type="text" class="form-control" id="inputName" placeholder="Juanito Perez">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-4 col-sm-8">
+            <button type="submit" class="btn btn-success">Ingresar</button>
+          </div>
+        </div>
+        </form>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="inputEmail" class="col-sm-2 control-label">Tu Email </label>
-      <div class="col-sm-4">
-        <input type="email" class="form-control" id="inputEmail" placeholder="juan.perez@virtuososcode.com ">
+      <div class="col-md-6">
+        <h1 class="logo-header">Ads Here!</h1p>
       </div>
+    </div><br>
+     <h2 class="logo-header">Streamings del día...</h2><br>
+    <div class="row">
+      {% for streaming in streamings %}
+        <div class="panel panel-info col-md-4 paggind-off">
+          <div class="panel-heading">{{ streaming.title }} por <span class="label label-primary">{{ streaming.user_email }}</span></div>
+          <div class="panel-body">
+            Streaming img
+          </div>
+          <div class="panel-footer"><button type="button" class="btn btn-info">Ingresar</button></div>
+        </div>
+        {% if forloop.counter|divisibleby:3 %}
+         </div><div class="row">
+        {% endif %}
+      {% endfor %}
     </div>
-    <div class="form-group">
-      <label for="inputName" class="col-sm-2 control-label">Tu nombre </label>
-      <div class="col-sm-4">
-        <input  type="text" class="form-control" id="inputName" placeholder="Juanito Perez">
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-success">Ingresar</button>
-      </div>
-    </div>
-    </form>
     <p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
         Si tienes alguna duda puedes escribir a <a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
 {% endblock %}
