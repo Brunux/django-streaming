@@ -4,15 +4,16 @@
 <h1 class="logo-header">Live Video Streaming...</h1>
 <div class="row">
   <div class="panel panel-success col-md-8 paggind-off">
-    <div class="panel-heading">Titulo del Streaming por <span class="label label-success"><big> Brunux </big></span></div>
+    <div class="panel-heading">{{ streaming.title }} por <span class="label label-success"><big> {{streaming.user_email}} </big></span></div>
     <div class="panel-body">
       <div class="embed-responsive embed-responsive-16by9">
-        Panel content
+        video
       </div>
     </div>
+    <p class="well margin-off"><strong>Descripción del streaming: </strong>{{ streaming.info }}</p>
   </div>
   <div class="panel panel-info col-md-3 paggind-off pull-right">
-    <div class="panel-heading">Usuarios <span class="badge">42</span></div>
+    <div class="panel-heading">Usuarios online <span class="badge">42</span></div>
     <div class="panel-body">
       <div class="embed-responsive embed-responsive-4by3">
         Panel content
