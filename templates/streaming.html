@@ -1,23 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="logo-header">Live Video Streaming...</h1>
+<h1 class="logo-header">Live Video Streaming...</h1><br>
 <div class="row">
-  <div class="panel panel-success col-md-8 paggind-off">
-    <div class="panel-heading">{{ streaming.title }} por <span class="label label-success"><big> {{streaming.user_email}} </big></span></div>
+  <div class="panel panel-success paggind-off">
+    <div class="panel-heading">{{ streaming.title }} </div>
     <div class="panel-body">
+      <div class="alert alert-warning alert-dismissible fade in" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <strong>Info: </strong>{{ streaming.info }}
+      </div>
       <div class="embed-responsive embed-responsive-16by9">
         video
       </div>
     </div>
-    <p class="well margin-off"><strong>Descripción del streaming: </strong>{{ streaming.info }}</p>
-  </div>
-  <div class="panel panel-info col-md-3 paggind-off pull-right">
-    <div class="panel-heading">Usuarios online <span class="badge">42</span></div>
+  <div class="panel-footer">Anfitrion: <a href="">{{streaming.user}}</a><span class="badge pull-right">42 online</span></div>
     <div class="panel-body">
-      <div class="embed-responsive embed-responsive-4by3">
-        Panel content
-      </div>
+      <div>chat...</div>
     </div>
     <div class="panel-footer">
       <div class="row">
@@ -25,14 +26,42 @@
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Preguntas?">
             <span class="input-group-btn">
-              <button class="btn btn-info" type="button">Enviar</button>
+              <!-- Button trigger modal -->
+              <button class="btn btn-info" type="button" data-toggle="modal" data-target="#myModal">Enviar</button>
             </span>
           </div><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
       </div>
     </div>
   </div>
-</div>
+</div><br>
 <p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
   Si tienes alguna duda puedes escribir a <a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Info usuario</h4>
+                  </div>
+                  <div class="modal-body">
+                    <form class="form-inline">
+                      <div class="form-group">
+                        <label for="exampleInputName2">Nombre</label>
+                        <input type="text" class="form-control" id="exampleInputName2" placeholder="Juanito Perez">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputEmail2">Email</label>
+                        <input type="email" class="form-control" id="exampleInputEmail2" placeholder="juan.perez@virtuososcode...">
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerar</button>
+                    <button type="submit" class="btn btn-primary">Chat!</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
 {% endblock %}

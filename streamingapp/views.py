@@ -2,14 +2,27 @@ import django.views.generic
 from django.views.generic.edit import FormView
 from .forms import StreamingForm
 from streamingapp.models import Streaming
+import datetime
 
 class Home(django.views.generic.TemplateView):
     template_name = "home.html"
     
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
-        # laterd on filter strimings by date insted all.
-        context['streamings'] = Streaming.objects.all()
+        # Streamings filter by today
+        streamings = Streaming.objects.filter(init_date=datetime.date.today())
+        
+        if len(streamings) == 1:
+            if len(streamings[0].title) > 50:
+                    streamings[0].title = streamings[0].title[:50] + " ..."
+            context['streaming'] = streamings[0]
+        
+        elif len(streamings) > 1:
+            for streaming in streamings:
+                if len(streaming.title) > 50:
+                    streaming.title = streaming.title[:50] + " ..."
+            context['streamings'] = streamings
+        
         return context
 home = Home.as_view()
 

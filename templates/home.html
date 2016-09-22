@@ -41,19 +41,31 @@
     </div><br>
      <h2 class="logo-header">Streamings del día...</h2><br>
     <div class="row">
-      {% for streaming in streamings %}
+      {% if streaming %}
         <div class="panel panel-info col-md-4 paggind-off">
-          <div class="panel-heading">{{ streaming.title }} por <span class="label label-primary">{{ streaming.user_email }}</span></div>
-          <div class="panel-body">
-            Streaming img
-          </div>
-          <div class="panel-footer"><a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
+          <div class="panel-heading">{{ streaming.title}}<p>por <span class="label label-primary">{{ streaming.user }}</span></p></div>
+            <div class="panel-body">
+              Streaming img
+            </div>
+          <div class="panel-footer"><p> Inicia: <strong>{{streaming.init_time}}</strong></p> <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
         </div>
-        {% if forloop.counter|divisibleby:3 %}
-         </div><div class="row">
-        {% endif %}
-      {% endfor %}
-    </div>
+      {% elif streamings %}
+        {% for streaming in streamings %}
+          <div class="panel panel-info col-md-4 paggind-off">
+            <div class="panel-heading">{{ streaming.title }}<p>por <span class="label label-primary">{{ streaming.user }}</span></p></div>
+            <div class="panel-body">
+              Streaming img
+            </div>
+            <div class="panel-footer"><p> Inicia: <strong>{{streaming.init_time}}</strong></p> <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
+          </div>
+          {% if forloop.counter|divisibleby:3 %}
+           </div><div class="row">
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <p>Lo sentimos no hay streamings publicos hoy :(</p>
+      {% endif %}
+       </div>
     <p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
         Si tienes alguna duda puedes escribir a <a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
 {% endblock %}
