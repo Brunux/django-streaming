@@ -43,20 +43,20 @@
     <div class="row">
       {% if streaming %}
         <div class="panel panel-info col-md-4 paggind-off">
-          <div class="panel-heading">{{ streaming.title}}<p>por <span class="label label-primary">{{ streaming.user }}</span></p></div>
+          <div class="panel-heading"><strong>{{ streaming.title}}</strong><p>por <span class="label label-default">{{ streaming.user }}</span></p></div>
             <div class="panel-body">
               Streaming img
             </div>
-          <div class="panel-footer"><p> Inicia: <strong>{{streaming.init_time}}</strong></p> <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
+          <div class="panel-footer"><p> Inicia: <strong>{{ streaming.init_time }}</strong></p> <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
         </div>
       {% elif streamings %}
         {% for streaming in streamings %}
           <div class="panel panel-info col-md-4 paggind-off">
-            <div class="panel-heading">{{ streaming.title }}<p>por <span class="label label-primary">{{ streaming.user }}</span></p></div>
+            <div class="panel-heading"><strong>{{ streaming.title }}</strong><p>por <span class="label label-default">{{ streaming.user }}</span></p></div>
             <div class="panel-body">
               Streaming img
             </div>
-            <div class="panel-footer"><p> Inicia: <strong>{{streaming.init_time}}</strong></p> <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
+            <div class="panel-footer"><p> Inicia: <strong>{{ streaming.init_time }}</strong></p> <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
           </div>
           {% if forloop.counter|divisibleby:3 %}
            </div><div class="row">
