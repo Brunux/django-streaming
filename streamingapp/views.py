@@ -56,3 +56,8 @@ class StreamingViewLinked(django.views.generic.TemplateView):
         context['streaming'] = Streaming.objects.get(uuid=self.request.path.replace("/",""))
         return context
 streaming_view_linked = StreamingViewLinked.as_view()
+
+
+class DoneCreateStreamingView(django.views.generic.TemplateView):
+    template_name = "done-create-streaming.html"
+done_create_streaming_view = DoneCreateStreamingView.as_view()

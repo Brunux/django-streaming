@@ -1,13 +1,52 @@
-{% extends "base.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VirtuososCode Streaming web app</title>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
 
-{% block content %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-theme.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    
+    <link href="{% static 'css/datetimepicker.css' %}" type="text/css" media="all" rel="stylesheet">
+    <script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.js' %}"></script>
+    
+    <link rel="stylesheet" href="{% static 'css/footer-distributed-with-address-and-phones.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href='https://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
+
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header logo">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <big><span>VC</span> Streaming-app</big>
+            </a>
+        </div>
+        <a href="{% url 'create-streaming' %}"><button type="button" class="navbar-right btn btn-primary navbar-btn">Crear Streaming</button></a>
+        {% if request.user.is_authenticated %}
+        <p class="navbar-text navbar-right">
+        Logged in as {{ request.user }}
+        /
+        <a href="{% url 'logout' %}">Logout</a>
+        </p>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="container">
     <div class="panel panel-primary">
     <div class="panel-heading">Crea tu Streaming</div>
     <div class="panel-body">
         <form method="post" action="{% url 'home' %}">
             {% csrf_token %}
             <table class="table">
-                {{form}}
+                {{ form }}
             </table>
             <input type="submit" value="Crear Streaming" class='btn btn-primary'>
         </form>
@@ -15,4 +54,52 @@
     </div>
     <p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
         Si tienes alguna duda puedes escribir a <a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
-{% endblock %}
+</div>
+
+<br>
+
+<footer class="footer-distributed">
+	<div class="footer-left">
+		<h3><span>Virtuososcode</span></h3>
+		<p class="footer-links">
+			<a href="https://virtuososcode.com">Home</a>
+			·
+			<a href="https://virtuososcode.com/team">El equipo</a>
+			·
+			<a href="https://virtuososcode.com/services">Servicios</a>
+			·
+			<a href="https://virtuososcode.com/vacantes">Vacantes</a>
+		</p>
+		<p class="footer-company-name">Virtuososcode &copy; 2016</p>
+	</div>
+	<div class="footer-center">
+		<div>
+			<i class="fa fa-map-marker"></i>
+			<p><span>Calle Revolución #21 Col. Americana</span> Guadalajara, Jalisco</p>
+		</div>
+		<div>
+			<i class="fa fa-phone"></i>
+			<p>+521 3319441828</p>
+		</div>
+		<div>
+			<i class="fa fa-envelope"></i>
+			<p><a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a></p>
+		</div>
+	</div>
+	<div class="footer-right">
+		<p class="footer-company-about">
+			<span>Acerca de nosotros</span>
+			Virtuososcode es un grupo de desarolladores <strong>fullstack</strong>, proporcionamos a nuestros clientes soluciones profecionales
+			en software usando tecnologias estables y de alto rendimiento.
+		</p>
+		<div class="footer-icons">
+			<a href="#"><i class="fa fa-facebook"></i></a>
+			<a href="#"><i class="fa fa-twitter"></i></a>
+			<a href="#"><i class="fa fa-linkedin"></i></a>
+			<a href="#"><i class="fa fa-github"></i></a>
+		</div>
+	</div>
+</footer>
+
+</body>
+</html>

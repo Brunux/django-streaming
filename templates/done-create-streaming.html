@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="logo-header logo"><span>Virtuososcode</span> Streaming App</h1>
+    <h5>Servicio gratuito de streaming para meetups. Si te interesa saber como funciona tecnicamente nuestro streaming <a href="#">aquí</a> lo explicamos,
+     si lo prefieres puedes ver nuestro repo en <a href="https://github.com/Brunux/vc-streaming-app">GitHub</a></h5>
+    </div>
+    <div class="row well">
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Felicidades!</strong> tu streaming ha sido agredado correctamente y un Email ha sido enviado a { user.email } con esta información,
+         si lo deseas puedes enviar el streaming a otras personas, solo completa el campo de <strong>Enviar a</strong> con una dirección de email validad.
+    </div>
+      <div class="col-md-6">
+        <div class="form-horizontal" method="post" action="#">
+        
+        <div class="form-group">
+          <label for="inputStreamingId" class="col-sm-4 control-label">Streaming ID </label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="inputStreamingId" placeholder="{ streaming.uuid }" readonly>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail" class="col-sm-4 control-label">Titulo</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="inputEmail" placeholder="{ streaming.title }" readonly>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail" class="col-sm-4 control-label">Fecha</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="inputEmail" placeholder="{ streaming.init_date }" readonly>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputName" class="col-sm-4 control-label">Hora de Inicio</label>
+          <div class="col-sm-8">
+            <input  type="text" class="form-control" id="inputName" placeholder="{ user.init_time }" readonly>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputName" class="col-sm-4 control-label">Enviar a</label>
+          <div class="col-sm-8">
+            <input  type="email" class="form-control" id="inputName" placeholder="juan.perez@virtuososcode.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-4 col-sm-8">
+            <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#modal-confirm">Enviar email</button>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h1 class="logo-header">Ads Here!</h1p>
+      </div>
+    </div><br>
+    <p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
+        Si tienes alguna duda puedes escribir a <a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
+
+<!-- Modal -->
+<div class="modal fade" id="modal-confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Confirmación</h4>
+      </div>
+      <div class="modal-body">
+        <strong>Muy bien!</strong> se han enviado correctamente los datos del streaming a {email}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerra</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
