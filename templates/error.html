@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+<h1 class="logo-header text-center">Lo sentimos</h1><br>
+<img class="img-responsive center-block img-rounded" src="{% static 'img/kc_fuws.png' %}"></img>
+<br>
+<h2 class="bg-danger logo-header text-center">Su solicitud no pudo ser procesada...</h2>
+<br>
+<p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
+  Si tienes alguna duda puedes escribir a <a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
+{% endblock %}

@@ -9,7 +9,7 @@
     <div class="row well">
     <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <strong>Felicidades!</strong> tu streaming ha sido agredado correctamente y un Email ha sido enviado a { user.email } con esta información,
+        <strong>Felicidades!</strong> tu streaming ha sido agredado correctamente y un Email ha sido enviado a <strong>{{ request.session.user }}</strong> con esta información,
          si lo deseas puedes enviar el streaming a otras personas, solo completa el campo de <strong>Enviar a</strong> con una dirección de email validad.
     </div>
       <div class="col-md-6">
@@ -18,25 +18,25 @@
         <div class="form-group">
           <label for="inputStreamingId" class="col-sm-4 control-label">Streaming ID </label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="inputStreamingId" placeholder="{ streaming.uuid }" readonly>
+            <input type="text" class="form-control" id="inputStreamingId" placeholder="{{ request.session.uuid }}" readonly>
           </div>
         </div>
         <div class="form-group">
           <label for="inputEmail" class="col-sm-4 control-label">Titulo</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="inputEmail" placeholder="{ streaming.title }" readonly>
+            <input type="text" class="form-control" id="inputEmail" placeholder="{{ request.session.title }}" readonly>
           </div>
         </div>
         <div class="form-group">
           <label for="inputEmail" class="col-sm-4 control-label">Fecha</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="inputEmail" placeholder="{ streaming.init_date }" readonly>
+            <input type="text" class="form-control" id="inputEmail" placeholder="{{ request.session.init_date }}" readonly>
           </div>
         </div>
         <div class="form-group">
           <label for="inputName" class="col-sm-4 control-label">Hora de Inicio</label>
           <div class="col-sm-8">
-            <input  type="text" class="form-control" id="inputName" placeholder="{ user.init_time }" readonly>
+            <input  type="text" class="form-control" id="inputName" placeholder="{{ request.session.init_time }}" readonly>
           </div>
         </div>
         <div class="form-group">
