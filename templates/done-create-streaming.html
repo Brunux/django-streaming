@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+{% block header %}
+  <script src="{% static 'js/main.js' %}"></script>
+{% endblock %}
 
 {% block content %}
 <div class="page-header">
@@ -13,43 +17,42 @@
          si lo deseas puedes enviar el streaming a otras personas, solo completa el campo de <strong>Enviar a</strong> con una dirección de email validad.
     </div>
       <div class="col-md-6">
-        <div class="form-horizontal" method="post" action="#">
-        
-        <div class="form-group">
-          <label for="inputStreamingId" class="col-sm-4 control-label">Streaming ID </label>
-          <div class="col-sm-8">
-            <input type="text" class="form-control" id="inputStreamingId" placeholder="{{ request.session.uuid }}" readonly>
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label for="inputStreamingId" class="col-sm-4 control-label">Streaming ID </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="inputStreamingId" placeholder="{{ request.session.uuid }}" readonly>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="inputEmail" class="col-sm-4 control-label">Titulo</label>
-          <div class="col-sm-8">
-            <input type="text" class="form-control" id="inputEmail" placeholder="{{ request.session.title }}" readonly>
+          <div class="form-group">
+            <label for="inputEmail" class="col-sm-4 control-label">Titulo</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="inputStreamingTitle" placeholder="{{ request.session.title }}" readonly>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="inputEmail" class="col-sm-4 control-label">Fecha</label>
-          <div class="col-sm-8">
-            <input type="text" class="form-control" id="inputEmail" placeholder="{{ request.session.init_date }}" readonly>
+          <div class="form-group">
+            <label for="inputEmail" class="col-sm-4 control-label">Fecha</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="inputStreamingDate_init" placeholder="{{ request.session.init_date }}" readonly>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="inputName" class="col-sm-4 control-label">Hora de Inicio</label>
-          <div class="col-sm-8">
-            <input  type="text" class="form-control" id="inputName" placeholder="{{ request.session.init_time }}" readonly>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-4 control-label">Hora de Inicio</label>
+            <div class="col-sm-8">
+              <input  type="text" class="form-control" id="inputStreamingTime_init" placeholder="{{ request.session.init_time }}" readonly>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="inputName" class="col-sm-4 control-label">Enviar a</label>
-          <div class="col-sm-8">
-            <input  type="email" class="form-control" id="inputName" placeholder="juan.perez@virtuososcode.com">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-4 control-label">Enviar a</label>
+            <div class="col-sm-8">
+              <input  type="email" class="form-control" id="inputStreamingEmail" data-id="invite-email"placeholder="juan.perez@virtuososcode.com">
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <div class="col-sm-offset-4 col-sm-8">
-            <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#modal-confirm">Enviar email</button>
+          <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+              <button class="btn btn-success" data-toggle="modal" data-target="#modal-confirm" id="send-email-btn">Enviar email</button>
+            </div>
           </div>
-        </div>
         </div>
       </div>
       <div class="col-md-6">
@@ -68,7 +71,7 @@
         <h4 class="modal-title" id="myModalLabel">Confirmación</h4>
       </div>
       <div class="modal-body">
-        <strong>Muy bien!</strong> se han enviado correctamente los datos del streaming a {email}
+        <strong>Muy bien!</strong> se han enviado correctamente los datos del streaming a <span id="email-to"></span>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerra</button>

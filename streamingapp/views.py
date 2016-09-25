@@ -5,10 +5,34 @@ from django.views.generic.edit import FormView
 from .forms import StreamingForm
 from .models import Streaming
 from django.shortcuts import redirect
+from django.http import HttpResponse
 import datetime, uuid
+import re
 
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
+
+# Send email
+def send_email(streaming):
+    subject = "Confirmación de Streaming virtuososcode"
+    to = [str(streaming.user)]
+    from_email = 'hola@virtuososcode.com'
+
+    ctx = {
+        'uuid': str(streaming.uuid),
+        'title': str(streaming.title),
+        'init_date': str(streaming.init_date),
+        'init_time': str(streaming.init_time),
+        'user': str(streaming.user),
+        'url': 'https://streaming.virtuososcode.com/' + str(streaming.uuid)
+        }
+    
+    message = get_template('email.html').render(ctx)
+    msg = EmailMessage(subject, message, to=to, from_email=from_email)
+    msg.content_subtype = 'html'
+    #msg.send()
+    print message
+
 
 class Home(django.views.generic.TemplateView):
     template_name = "home.html"
@@ -65,35 +89,16 @@ class StreamingCreateView(FormView):
                 )
             streaming.save()
             
-            # saving data to be send to success url
+            # Send email
+            send_email(streaming)
             
+            # saving data to be send to success url
             self.request.session['uuid'] = str(streaming.uuid)
             self.request.session['title'] = str(streaming.title)
             self.request.session['init_date'] = str(streaming.init_date)
             self.request.session['init_time'] = str(streaming.init_time)
             self.request.session['user'] = str(streaming.user)
-            
-            # Send email
-            
-            subject = "Confirmación de Streaming virtuososcode"
-            to = [str(streaming.user)]
-            from_email = 'hola@virtuososcode.com'
-        
-            ctx = {
-                'uuid': str(streaming.uuid),
-                'title': str(streaming.title),
-                'init_date': str(streaming.init_date),
-                'init_time': str(streaming.init_time),
-                'user': str(streaming.user),
-                'url': 'https://streaming.virtuososcode.com/' + str(streaming.uuid)
-                }
-            
-            message = get_template('email.html').render(ctx)
-            msg = EmailMessage(subject, message, to=to, from_email=from_email)
-            msg.content_subtype = 'html'
-            #msg.send()
-            print message
-            
+
             return super(StreamingCreateView, self).form_valid(form)
         return redirect(error_view)
 streaming_create_view = StreamingCreateView.as_view()
@@ -128,3 +133,20 @@ class ErrorView(django.views.generic.TemplateView):
     template_name = "error.html"
 error_view = ErrorView.as_view()
 
+def send_email_guest(request):
+    email = request.GET.get('email', None)
+    uuid = request.GET.get('uuid', None)
+    print email, uuid
+    
+    # Get streaming from uuid as dictionary
+    streaming = Streaming.objects.get(uuid=uuid)
+    
+    # match any valid email
+    pattern = re.compile('^[^@\\s]+@([^@\\s]+\\.)+[^@\\s]+$')
+    
+    if (type(pattern.match(email)) == type(pattern.match('email@email.com'))):
+        send_email(streaming)
+        return HttpResponse(email)
+    else:
+        return redirect(error_view)
+    

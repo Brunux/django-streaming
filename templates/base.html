@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href='https://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
     {% block header %}{% endblock %}
 </head>
 <body>
@@ -62,6 +64,12 @@
 			·
 			<a href="https://virtuososcode.com/vacantes">Vacantes</a>
 		</p>
+		<div class="footer-icons">
+			<a href="#"><i class="fa fa-facebook"></i></a>
+			<a href="#"><i class="fa fa-twitter"></i></a>
+			<a href="#"><i class="fa fa-linkedin"></i></a>
+			<a href="#"><i class="fa fa-github"></i></a>
+		</div>
 		<p class="footer-company-name">Virtuososcode &copy; 2016</p>
 	</div>
 	<div class="footer-center">
@@ -81,24 +89,14 @@
 	<div class="footer-right">
 		<p class="footer-company-about">
 			<span>Acerca de nosotros</span>
-			Virtuososcode es un grupo de desarolladores <strong>fullstack</strong>, proporcionamos a nuestros clientes soluciones profecionales
-			en software usando tecnologias estables y de alto rendimiento.
+			Virtuososcode, somos un grupo de desarolladores <strong>fullstack</strong>, proporcionamos a nuestros clientes soluciones profesionales
+			en aplicaciones y portales web usamos tecnologías estables y de alto rendimiento como Angular, ES6, NodeJS, Django, Ruby on Rails y Bootstrap.
 		</p>
-		<div class="footer-icons">
-			<a href="#"><i class="fa fa-facebook"></i></a>
-			<a href="#"><i class="fa fa-twitter"></i></a>
-			<a href="#"><i class="fa fa-linkedin"></i></a>
-			<a href="#"><i class="fa fa-github"></i></a>
-		</div>
 	</div>
 </footer>
 {% endblock %}
-<script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
-
 
 {% block scripts %}{% endblock %}
-
 
 </body>
 </html>
