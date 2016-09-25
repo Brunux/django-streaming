@@ -133,6 +133,7 @@ class ErrorView(django.views.generic.TemplateView):
     template_name = "error.html"
 error_view = ErrorView.as_view()
 
+# AJAX
 def send_email_guest(request):
     email = request.GET.get('email', None)
     uuid = request.GET.get('uuid', None)
