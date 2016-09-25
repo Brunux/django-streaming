@@ -137,9 +137,8 @@ error_view = ErrorView.as_view()
 def send_email_guest(request):
     email = request.GET.get('email', None)
     uuid = request.GET.get('uuid', None)
-    print email, uuid
     
-    # Get streaming from uuid as dictionary
+    # Get streaming from uuid
     streaming = Streaming.objects.get(uuid=uuid)
     
     # match any valid email
@@ -149,5 +148,5 @@ def send_email_guest(request):
         send_email(streaming)
         return HttpResponse(email)
     else:
-        return redirect(error_view)
+        return HttpResponse('No hacking dude!')
     

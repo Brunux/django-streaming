@@ -67,7 +67,10 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
-        <strong>Muy bien!</strong> se han enviado correctamente los datos del streaming a <span id="email-to"></span>
+        <div class="alert alert-success" role="alert">
+          <strong>Muy bien!</strong> se han enviado correctamente los datos del streaming a <strong id="email-to"></strong>
+        </div>
+        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerra</button>
@@ -80,7 +83,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
-        <div class="alert alert-warning alert-dismissible" role="alert">
+        <div class="alert alert-danger" role="alert">
           <strong>Lo sentimos,</strong> la dirección de email <strong id="email-to-error"></strong> no es valida.
         </div>
       </div>

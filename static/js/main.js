@@ -18,6 +18,8 @@ $(document).ready( function() {
                     },
                 success : function(response){
                     element.html(response);
+                    $('#modal-success').modal('show');
+                    
                 }
             });
         }
