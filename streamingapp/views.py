@@ -1,9 +1,14 @@
+# -*- coding: utf-8 -*-
+
 import django.views.generic
 from django.views.generic.edit import FormView
 from .forms import StreamingForm
 from .models import Streaming
 from django.shortcuts import redirect
 import datetime, uuid
+
+from django.template.loader import get_template
+from django.core.mail import EmailMessage
 
 class Home(django.views.generic.TemplateView):
     template_name = "home.html"
@@ -60,20 +65,37 @@ class StreamingCreateView(FormView):
                 )
             streaming.save()
             
+            # saving data to be send to success url
+            
             self.request.session['uuid'] = str(streaming.uuid)
             self.request.session['title'] = str(streaming.title)
             self.request.session['init_date'] = str(streaming.init_date)
             self.request.session['init_time'] = str(streaming.init_time)
             self.request.session['user'] = str(streaming.user)
             
+            # Send email
+            
+            subject = "Confirmación de Streaming virtuososcode"
+            to = [str(streaming.user)]
+            from_email = 'hola@virtuososcode.com'
+        
+            ctx = {
+                'uuid': str(streaming.uuid),
+                'title': str(streaming.title),
+                'init_date': str(streaming.init_date),
+                'init_time': str(streaming.init_time),
+                'user': str(streaming.user),
+                'url': 'https://streaming.virtuososcode.com/' + str(streaming.uuid)
+                }
+            
+            message = get_template('email.html').render(ctx)
+            msg = EmailMessage(subject, message, to=to, from_email=from_email)
+            msg.content_subtype = 'html'
+            #msg.send()
+            print message
+            
             return super(StreamingCreateView, self).form_valid(form)
         return redirect(error_view)
-        
-    def get_context_data(self, **kwargs):
-        context = super(StreamingCreateView, self).get_context_data(**kwargs)
-        # Need to get streaming object by URL to pass to the template tags,
-        # check URL dispatcher docs.
-        return context
 streaming_create_view = StreamingCreateView.as_view()
 
 # This should be used with the home form to access a streaming with a given uuid.
@@ -98,9 +120,11 @@ streaming_view_linked = StreamingViewLinked.as_view()
 class DoneCreateStreamingView(django.views.generic.TemplateView):
     template_name = "done-create-streaming.html"
     context_object_name = 'streaming'
+
 done_create_streaming_view = DoneCreateStreamingView.as_view()
 
 # This should be used to display all posible errors
 class ErrorView(django.views.generic.TemplateView):
     template_name = "error.html"
 error_view = ErrorView.as_view()
+
