@@ -45,7 +45,7 @@
                                         <p class="text-left"><strong>{{ request.user }}</strong></p>
                                         <p class="text-left small">{{ request.user.email }}</p>
                                         <p class="text-left">
-                                            <a href="{% url 'create-streaming' %}" class="btn btn-primary btn-block btn-sm">Crear Streaming</a>
+                                            <a href="{% url 'logout' %}" class="btn btn-danger btn-block btn-sm">Salir</a>
                                         </p>
                                     </div>
                                 </div>
@@ -57,7 +57,7 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <p>
-                                            <a href="{% url 'logout' %}" class="btn btn-danger btn-block">Salir</a>
+                                            <a href="{% url 'create-streaming' %}" class="btn btn-primary btn-block">Crear Streaming</a>
                                         </p>
                                     </div>
                                 </div>
