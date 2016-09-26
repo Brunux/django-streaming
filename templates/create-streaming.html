@@ -14,6 +14,7 @@
             <table class="table">
                 {{ form }}
             </table>
+            <p>*Si el streaming es publico, será agregado a la página de inicio.</p>
             {% if request.user.is_authenticated %}
             <input type="submit" value="Crear Streaming" class='btn btn-primary'>
             {% else %}
