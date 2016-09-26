@@ -77,19 +77,21 @@ class StreamingCreateView(FormView):
             duration = False
         
         if duration and self.request.user.is_authenticated():
-            streaming = Streaming(
-                    user = self.request.user,
-                    title = form.cleaned_data['title'],
-                    init_date = form.cleaned_data['init_date'],
-                    init_time = form.cleaned_data['init_time'],
-                    duration = duration,
-                    uuid = uuid.uuid4(),
-                    info = form.cleaned_data['info'],
-                    is_public = form.cleaned_data['is_public'],
-                    image = form.cleaned_data['image']
-                )
-            streaming.save()
-            
+            try:
+                streaming = Streaming(
+                        user = self.request.user,
+                        title = form.cleaned_data['title'],
+                        init_date = form.cleaned_data['init_date'],
+                        init_time = form.cleaned_data['init_time'],
+                        duration = duration,
+                        uuid = uuid.uuid4(),
+                        info = form.cleaned_data['info'],
+                        is_public = form.cleaned_data['is_public'],
+                        image = form.cleaned_data['image']
+                    )
+                streaming.save()
+            except:
+                return redirect(error_view)
             # Send email
             send_email(streaming)
             
