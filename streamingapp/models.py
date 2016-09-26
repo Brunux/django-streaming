@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -12,7 +13,7 @@ class Streaming(models.Model):
         (QUARTER, "15 Minutos"),
     )
     
-    user = models.CharField(max_length=128)
+    user = models.ForeignKey(User)
     title = models.CharField(max_length=128)
     init_date = models.DateField(auto_now=False, auto_now_add=False)
     init_time = models.TimeField(auto_now=False, auto_now_add=False)
@@ -24,6 +25,8 @@ class Streaming(models.Model):
     uuid = models.UUIDField()
     info = models.TextField()
     is_public = models.BooleanField(default=True)
+    image = models.ImageField(upload_to='streaming_images',
+                                default='default.png')
     # Add presentation field as optional
     
     def __str__(self):

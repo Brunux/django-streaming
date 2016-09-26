@@ -1,4 +1,5 @@
 Django==1.9.9
+Pillow==3.3.1
 argparse==1.2.1
 colorlog==2.7.0
 django-datetime-widget==0.9.3

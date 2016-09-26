@@ -64,6 +64,7 @@ class StreamingCreateView(FormView):
     duration = False
 
     def form_valid(self, form):
+        import pdb; pdb.set_trace()
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         # Check StreamingForm to set manually user_email and uuid fields.
@@ -76,16 +77,17 @@ class StreamingCreateView(FormView):
         else:
             duration = False
         
-        if duration:        
+        if duration and not self.request.user.is_anonymous():
             streaming = Streaming(
-                    user = 'brunux@virtuososcode.com',
+                    user = self.request.user,
                     title = form.cleaned_data['title'],
                     init_date = form.cleaned_data['init_date'],
                     init_time = form.cleaned_data['init_time'],
                     duration = duration,
                     uuid = uuid.uuid4(),
                     info = form.cleaned_data['info'],
-                    is_public = form.cleaned_data['is_public']
+                    is_public = form.cleaned_data['is_public'],
+                    image = form.cleaned_data['image']
                 )
             streaming.save()
             

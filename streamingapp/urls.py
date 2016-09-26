@@ -1,5 +1,7 @@
 from django.conf.urls import url
-
+from django.conf import settings
+# This is just to serve file locally NO USE IN PRODUCCTION
+from django.views.static import serve
 from . import views
 
 urlpatterns = [
@@ -12,4 +14,10 @@ urlpatterns = [
     url(r"^done-create-streaming/$", views.done_create_streaming_view, name="done-create-streaming"),
     url(r"^send-email-guest/$", views.send_email_guest, name="send-email-guest"),
     url(r"^error/$", views.error_view, name="error-view")
+]
+
+if settings.DEBUG:
+    urlpatterns += [
+        url(r"^media/(?P<path>.*)$", serve,
+        {'document_root': settings.MEDIA_ROOT,}),
 ]

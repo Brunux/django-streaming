@@ -8,7 +8,7 @@ from .models import Streaming
 class StreamingForm(forms.ModelForm):
     class Meta:
         model = Streaming
-        fields = ['title', 'init_date', 'init_time', 'duration', 'info', 'is_public']
+        fields = ['title', 'init_date', 'init_time', 'duration', 'info', 'is_public', 'image']
         widgets = {
             'title': forms.Textarea(attrs={'rows': 1, 'placeholder': 'Meetup Python: Web apps con Django'}),
             'info': forms.Textarea(attrs={'rows': 5, 'placeholder': 'En este streaming mostraremos como crear una aplicacion web usando Django framework'}),
