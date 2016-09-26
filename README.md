@@ -1,5 +1,5 @@
 # VC-streaming-app
-virtuososcode Streaming Web Application Repo
+Virtuososcode Streaming Web Application
 
 ## Instructions
 Clone repo
@@ -11,7 +11,7 @@ Install python-2.7 Virtual Environment tool
 ``` bash
     $ pip install virtualenv
 ```
-Create a virtual Environment
+Create a Virtual Environment
 ``` bash
     $ virtualenv venv
 ```
@@ -36,11 +36,11 @@ Run development server
 ``` bash
     $ python manage.py runserver 0.0.0.0:8080
 ```
-Finally, poit your web browser to [http://localhost:8080](http://localhost:8080)
+Finally, point your web browser to [http://localhost:8080](http://localhost:8080)
 
-Optionally you could activate email functions, please check `project/common_settings.py` file and uncomment lines
+And optionally you could activate email functions, please check `project/common_settings.py` file and uncomment lines
 ```
-# Send mail set this as enviroment virables at /home/[user]/.profile
+# Send mail, set this as enviroment virables at /home/[user]/.profile
 
 #EMAIL_HOST = os.environ['EMAIL_HOST']
 #EMAIL_PORT = os.environ['EMAIL_PORT']
@@ -48,12 +48,11 @@ Optionally you could activate email functions, please check `project/common_sett
 #EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 #EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
 ```
-And activate sendmail by uncommente line at `streamingapp/views.py`
+And activate sendmail by uncommente line `#msg.send()` at `streamingapp/views.py`
 ```
     ...
     msg = EmailMessage(subject, message, to=to, from_email=from_email)
     msg.content_subtype = 'html'
     #msg.send()
-    print message
     ...
 ```
