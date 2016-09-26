@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="panel panel-default">
-    <div class="panel-heading">Por favor, Ingresa</div>
+    <div class="panel-heading logo-header">Por favor, Ingresa</div>
     <div class="panel-body">
         <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
@@ -13,4 +13,48 @@
         </form>
     </div>
     </div>
+    <div class="logo">
+        <span class="logo">No tienes cuenta?</span>
+    </div>
+    <a href="{ url 'create_user' }"></a><button class="btn btn-primary" data-toggle="modal" data-target="#registerModal">Crear</button>
+
+<!-- Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Crear cuenta</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputFile">File input</label>
+            <input type="file" id="exampleInputFile">
+            <p class="help-block">Example block-level help text here.</p>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox"> Check me out
+            </label>
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary">Registrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

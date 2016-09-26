@@ -5,3 +5,4 @@ __pycache__
 *.pyc
 
 settings.py
+media/*
