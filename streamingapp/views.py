@@ -64,7 +64,6 @@ class StreamingCreateView(FormView):
     duration = False
 
     def form_valid(self, form):
-        import pdb; pdb.set_trace()
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         # Check StreamingForm to set manually user_email and uuid fields.
@@ -135,20 +134,23 @@ class ErrorView(django.views.generic.TemplateView):
     template_name = "error.html"
 error_view = ErrorView.as_view()
 
-# AJAX
+# AJAX Requests
 def send_email_guest(request):
-    email = request.GET.get('email', None)
-    uuid = request.GET.get('uuid', None)
     
-    # Get streaming from uuid
-    streaming = Streaming.objects.get(uuid=uuid)
-    
-    # match any valid email
-    pattern = re.compile('^[^@\\s]+@([^@\\s]+\\.)+[^@\\s]+$')
-    
-    if (type(pattern.match(email)) == type(pattern.match('email@email.com'))):
-        send_email(streaming)
-        return HttpResponse(email)
-    else:
-        return HttpResponse('No hacking dude!')
+    # Match any valid email.
+    PATTERN = re.compile('^[^@\\s]+@([^@\\s]+\\.)+[^@\\s]+$')
 
+    try:
+        email = request.GET.get('email', None)
+        uuid = request.GET.get('uuid', None)
+        
+        # Get streaming from uuid.
+        streaming = Streaming.objects.get(uuid=uuid)
+    except:
+        return HttpResponse('Request Error')
+    else:
+        if (type(PATTERN.match(email)) == type(PATTERN.match('user@email.com'))):
+            send_email(streaming)
+            return HttpResponse(email)
+        else:
+            return HttpResponse('No hacking dude!')
