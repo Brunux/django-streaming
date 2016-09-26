@@ -6,7 +6,8 @@ from .forms import StreamingForm
 from .models import Streaming
 from django.shortcuts import redirect
 from django.http import HttpResponse
-import datetime, uuid
+from uuid import uuid4
+from datetime import time, date
 import re
 
 from django.template.loader import get_template
@@ -14,9 +15,10 @@ from django.core.mail import EmailMessage
 
 # Send email
 def send_email(streaming):
-    subject = "Confirmación de Streaming virtuososcode"
+    site = "compartoskill.com"
+    subject = "Confirmación de Streaming CompartoSkill"
     to = [str(streaming.user)]
-    from_email = 'hola@virtuososcode.com'
+    from_email = 'hola@' + site
 
     ctx = {
         'uuid': str(streaming.uuid),
@@ -24,15 +26,17 @@ def send_email(streaming):
         'init_date': str(streaming.init_date),
         'init_time': str(streaming.init_time),
         'user': str(streaming.user),
-        'url': 'https://streaming.virtuososcode.com/' + str(streaming.uuid)
+        'url': 'https://' + site + str(streaming.uuid)
         }
     
     message = get_template('email.html').render(ctx)
-    msg = EmailMessage(subject, message, to=to, from_email=from_email)
-    msg.content_subtype = 'html'
-    #msg.send()
-    print message
-
+    try:
+        msg = EmailMessage(subject, message, to=to, from_email=from_email)
+        msg.content_subtype = 'html'
+        #msg.send()
+        print message
+    except:
+        return HttpResponse('Request Error')
 
 class Home(django.views.generic.TemplateView):
     template_name = "home.html"
@@ -40,9 +44,9 @@ class Home(django.views.generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
         # Streamings filter by today
-        streamings = Streaming.objects.filter(init_date=datetime.date.today())
+        streamings = Streaming.objects.filter(init_date=date.today())
         
-        if len(streamings) == 1:
+        if len(streamings) <= 1:
             if len(streamings[0].title) > 50:
                     streamings[0].title = streamings[0].title[:50] + " ..."
             context['streaming'] = streamings[0]
@@ -68,11 +72,11 @@ class StreamingCreateView(FormView):
         # It should return an HttpResponse.
         # Check StreamingForm to set manually user_email and uuid fields.
         if form.cleaned_data['duration'] == '1':
-            duration = datetime.time(1,0)
+            duration = time(1,0)
         elif form.cleaned_data['duration'] == '30':
-            duration = datetime.time(0,30)
+            duration = time(0,30)
         elif form.cleaned_data['duration'] == '15':
-            duration = datetime.time(0,15)
+            duration = time(0,15)
         else:
             duration = False
         
@@ -84,7 +88,7 @@ class StreamingCreateView(FormView):
                         init_date = form.cleaned_data['init_date'],
                         init_time = form.cleaned_data['init_time'],
                         duration = duration,
-                        uuid = uuid.uuid4(),
+                        uuid = uuid4(),
                         info = form.cleaned_data['info'],
                         is_public = form.cleaned_data['is_public'],
                         image = form.cleaned_data['image']
