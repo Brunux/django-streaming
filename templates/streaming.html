@@ -3,7 +3,7 @@
 {% block content %}
 <h1 class="logo-header">Live Video Streaming...</h1><br>
 <div class="row">
-  <div class="panel panel-success paggind-off">
+  <div class="panel panel-info paggind-off">
     <div class="panel-heading">{{ streaming.title }} </div>
     <div class="panel-body">
       <div class="alert alert-warning alert-dismissible fade in" role="alert">
@@ -16,7 +16,7 @@
         video
       </div>
     </div>
-  <div class="panel-footer">Anfitrion: <a href="">{{streaming.user}}</a><span class="badge pull-right">42 online</span></div>
+  <div class="panel-footer">Anfitrion: <a href="mailto:{{streaming.user.email}}">{{streaming.user}}</a><span class="badge pull-right">42 online</span></div>
     <div class="panel-body">
       <div>chat...</div>
     </div>

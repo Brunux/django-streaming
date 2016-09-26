@@ -14,7 +14,11 @@
             <table class="table">
                 {{ form }}
             </table>
+            {% if request.user.is_authenticated %}
             <input type="submit" value="Crear Streaming" class='btn btn-primary'>
+            {% else %}
+            <a href="{% url 'login' %}"><button type="button" class="btn btn-primary">Crear Streaming</button></a>
+            {% endif %}
         </form>
     </div>
     </div>
