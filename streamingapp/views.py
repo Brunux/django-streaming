@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import django.views.generic
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, CreateView
 from .forms import StreamingForm
 from .models import Streaming
 from django.shortcuts import redirect
@@ -12,6 +12,18 @@ import re
 
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
+
+from django.contrib.auth.models import User
+
+# Check valid email
+def check_email(email):
+    PATTERN = re.compile('^[^@\\s]+@([^@\\s]+\\.)+[^@\\s]+$')
+    return PATTERN.match(email)
+
+# Check Strong password
+def check_pass(password):
+    PATTERN = re.compile('[A-Za-z0-9@#$%^&+=]{8,}')
+    return PATTERN.match(password)
 
 # Send email
 def send_email(streaming):
@@ -46,16 +58,21 @@ class Home(django.views.generic.TemplateView):
         # Streamings filter by today
         streamings = Streaming.objects.filter(init_date=date.today())
         
-        if len(streamings) <= 1:
+        if len(streamings) == 0:
+            context['streaming'] = False
+            context['streamings'] = False
+        elif len(streamings) == 1:
             if len(streamings[0].title) > 50:
                     streamings[0].title = streamings[0].title[:50] + " ..."
             context['streaming'] = streamings[0]
+            context['streamings'] = False
         
         elif len(streamings) > 1:
             for streaming in streamings:
                 if len(streaming.title) > 50:
                     streaming.title = streaming.title[:50] + " ..."
             context['streamings'] = streamings
+            context['streaming'] = False
         
         return context
 home = Home.as_view()
@@ -140,12 +157,9 @@ class ErrorView(django.views.generic.TemplateView):
     template_name = "error.html"
 error_view = ErrorView.as_view()
 
+
 # AJAX Requests
 def send_email_guest(request):
-    
-    # Match any valid email.
-    PATTERN = re.compile('^[^@\\s]+@([^@\\s]+\\.)+[^@\\s]+$')
-
     try:
         email = request.GET.get('email', None)
         uuid = request.GET.get('uuid', None)
@@ -155,8 +169,26 @@ def send_email_guest(request):
     except:
         return HttpResponse('Request Error')
     else:
-        if (type(PATTERN.match(email)) == type(PATTERN.match('user@email.com'))):
+        if (type(check_email(email)) == type(check_email('user@email.com'))):
             send_email(streaming)
             return HttpResponse(email)
         else:
             return HttpResponse('No hacking dude!')
+
+class CreateUser(CreateView):
+    model = User
+    fields = ['username', 'email', 'password']
+    
+    success_url = '/accounts/login'
+    
+    def render_to_response(self, context, **response_kwargs):
+ 
+        response_kwargs.setdefault('content_type', self.content_type)
+        return self.response_class(
+            request=self.request,
+            template=get_template('create-user.html'),
+            context=context,
+            using=self.template_engine,
+            **response_kwargs
+            )
+create_user = CreateUser.as_view()

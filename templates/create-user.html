@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="panel panel-primary">
+    <div class="panel-heading">Crear cuenta</div>
+    <div class="panel-body">
+        <form method="post" action="{% url 'create-user' %}">
+            {% csrf_token %}
+            <table class="table">
+                {{ form }}
+            </table>
+            <button type="submit" class="btn btn-primary">Crear</button>
+        </form>
+    </div>
+    </div>
+    <p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
+        Si tienes alguna duda puedes escribir a <a href="mailto:hola@compartoskill.com">hola@compartoskill.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
+{% endblock %}

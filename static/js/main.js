@@ -1,4 +1,6 @@
 $(document).ready( function() {
+    
+    // Send email request function
     $('.form-horizontal').on('click', 'button', function(event) {
         event.preventDefault();
         

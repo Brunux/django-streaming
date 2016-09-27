@@ -13,7 +13,8 @@ urlpatterns = [
     url(r"[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}", views.streaming_view_linked, name="streaming-linked"),
     url(r"^done-create-streaming/$", views.done_create_streaming_view, name="done-create-streaming"),
     url(r"^send-email-guest/$", views.send_email_guest, name="send-email-guest"),
-    url(r"^error/$", views.error_view, name="error-view")
+    url(r"^create-user/$", views.create_user, name="create-user"),
+    url(r"^error/$", views.error_view, name="error-view"),
 ]
 
 if settings.DEBUG:
