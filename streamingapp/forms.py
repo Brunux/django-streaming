@@ -3,6 +3,8 @@
 from datetimewidget.widgets import DateWidget, TimeWidget
 from django.utils.translation import ugettext_lazy as _
 from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from .models import Streaming
 
 class StreamingForm(forms.ModelForm):
@@ -29,3 +31,9 @@ class StreamingForm(forms.ModelForm):
             },
         }
         # Check Streaming model for all the fields needed to save the form
+        
+
+class UserCreateForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ["username", "email"]

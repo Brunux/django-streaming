@@ -2,7 +2,7 @@
 
 import django.views.generic
 from django.views.generic.edit import FormView, CreateView
-from .forms import StreamingForm
+from .forms import StreamingForm, UserCreateForm
 from .models import Streaming
 from django.shortcuts import redirect
 from django.http import HttpResponse
@@ -14,6 +14,7 @@ from django.template.loader import get_template
 from django.core.mail import EmailMessage
 
 from django.contrib.auth.models import User
+from  django.contrib.auth import hashers
 
 # Check valid email
 def check_email(email):
@@ -169,26 +170,32 @@ def send_email_guest(request):
     except:
         return HttpResponse('Request Error')
     else:
-        if (type(check_email(email)) == type(check_email('user@email.com'))):
+        if type(check_email(email)) == type(check_email('user@email.com')):
             send_email(streaming)
             return HttpResponse(email)
         else:
             return HttpResponse('No hacking dude!')
 
-class CreateUser(CreateView):
-    model = User
-    fields = ['username', 'email', 'password']
-    
+class CreateUser(FormView):
+    template_name = "create-user.html"
+    form_class = UserCreateForm
     success_url = '/accounts/login'
     
-    def render_to_response(self, context, **response_kwargs):
- 
-        response_kwargs.setdefault('content_type', self.content_type)
-        return self.response_class(
-            request=self.request,
-            template=get_template('create-user.html'),
-            context=context,
-            using=self.template_engine,
-            **response_kwargs
-            )
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        try:
+            if form.cleaned_data['password1'] == form.cleaned_data['password2']:
+                if type(check_email(form.cleaned_data['email'])) == type(check_email('user@email.com')):
+                    if not User.objects.filter(username=form.cleaned_data['username']):
+                        password_gen = hashers.make_password(form.cleaned_data['password1'])
+                        user = User(username=form.cleaned_data['username'], email=form.cleaned_data['email'], password=password_gen)
+                        user.save()
+                else:
+                    return redirect(error_view)
+            else:
+                return redirect(error_view)
+        except:
+            return redirect(error_view)
+        return super(CreateUser, self).form_valid(form)
 create_user = CreateUser.as_view()
