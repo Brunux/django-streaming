@@ -15,8 +15,8 @@ class Streaming(models.Model):
     
     user = models.ForeignKey(User)
     title = models.CharField(max_length=128)
-    init_date = models.DateField(auto_now=False, auto_now_add=False)
-    init_time = models.TimeField(auto_now=False, auto_now_add=False)
+    init_datetime = models.DateTimeField(auto_now=False, auto_now_add=False)
+    init_date = models.DateTimeField(auto_now=False, auto_now_add=False)
     duration = models.CharField(
         max_length=2,
         choices=DURATION_CHOICES,

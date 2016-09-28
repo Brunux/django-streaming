@@ -47,7 +47,9 @@
             <div class="panel-body">
               <img src="{{ streaming.image.url }}" class="img-fixed center-block"></img>
             </div>
-          <div class="panel-footer"><p> Inicia: <strong>{{ streaming.init_time }}</strong></p> <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
+          <div class="panel-footer">
+            <p> Inicia: <strong>{{ streaming.init_datetime }}</strong> (en <strong>{{ streaming.time_to_init.hours }}</strong> horas y <strong>{{ streaming.time_to_init.minutes }}</strong> min.)</p>
+            <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
         </div>
       {% elif streamings %}
         {% for streaming in streamings %}
@@ -56,7 +58,9 @@
             <div class="panel-body">
               <img src="{{ streaming.image.url }}" class="img-fixed center-block"></img>
             </div>
-            <div class="panel-footer"><p> Inicia: <strong>{{ streaming.init_time }}</strong></p> <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
+            <div class="panel-footer">
+              <p> Inicia: <strong>{{ streaming.init_datetime }}</strong> (en <strong>{{ streaming.time_to_init.hours }}</strong> horas y <strong>{{ streaming.time_to_init.minutes }}</strong> min.)</p>
+              <a href="/{{ streaming.uuid }}/" class="btn btn-info" role="button">Ingresar</a></div>
           </div>
           {% if forloop.counter|divisibleby:3 %}
            </div><div class="row">

@@ -6,15 +6,17 @@ from .forms import StreamingForm, UserCreateForm
 from .models import Streaming
 from django.shortcuts import redirect
 from django.http import HttpResponse
-from uuid import uuid4
-from datetime import time, date
-import re
+from datetime import time
+from django.utils import timezone
+import re, uuid
 
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
 
 from django.contrib.auth.models import User
 from  django.contrib.auth import hashers
+
+from taskapp.tasks import deploy_server
 
 # Check valid email
 def check_email(email):
@@ -26,6 +28,10 @@ def check_pass(password):
     PATTERN = re.compile('[A-Za-z0-9@#$%^&+=]{8,}')
     return PATTERN.match(password)
 
+# Convert Time Delta
+def hours_minutes(td):
+    return td.seconds//3600, (td.seconds//60)%60
+
 # Send email
 def send_email(streaming):
     site = "compartoskill.com"
@@ -36,8 +42,8 @@ def send_email(streaming):
     ctx = {
         'uuid': str(streaming.uuid),
         'title': str(streaming.title),
-        'init_date': str(streaming.init_date),
-        'init_time': str(streaming.init_time),
+        'init_date': str(streaming.init_datetime.date()),
+        'init_time': str(streaming.init_datetime.time()),
         'user': str(streaming.user),
         'url': 'https://' + site + str(streaming.uuid)
         }
@@ -57,24 +63,36 @@ class Home(django.views.generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
         # Streamings filter by today
-        streamings = Streaming.objects.filter(init_date=date.today())
-        
+        streamings = Streaming.objects.filter(init_date=timezone.now().date())
         if len(streamings) == 0:
             context['streaming'] = False
             context['streamings'] = False
+            context['time_to_init'] = False
         elif len(streamings) == 1:
+            if (streamings[0].init_datetime - timezone.now()).total_seconds() > 0:
+                context['streaming'] = streamings[0]
+                
+                hours, minutes = hours_minutes(streamings[0].init_datetime - timezone.now())
+                context['streaming'].time_to_init = {'hours': hours , 'minutes': minutes} 
+                
+                context['streamings'] = False
             if len(streamings[0].title) > 50:
-                    streamings[0].title = streamings[0].title[:50] + " ..."
-            context['streaming'] = streamings[0]
-            context['streamings'] = False
+                streamings[0].title = streamings[0].title[:50] + " ..."
         
         elif len(streamings) > 1:
+            x = 0
+            context['streamings'] = []
             for streaming in streamings:
-                if len(streaming.title) > 50:
-                    streaming.title = streaming.title[:50] + " ..."
-            context['streamings'] = streamings
-            context['streaming'] = False
-        
+                if (streaming.init_datetime - timezone.now()).total_seconds() > 0:
+                    context['streamings'].insert(x, streaming)
+                    
+                    hours, minutes = hours_minutes(streaming.init_datetime - timezone.now())
+                    context['streamings'][x].time_to_init = {'hours': hours , 'minutes': minutes}
+                    
+                    if len(streaming.title) > 50:
+                        context['streamings'][x].title = streaming.title[:50] + " ..."
+                    x += 1
+            x = 0
         return context
 home = Home.as_view()
 
@@ -100,13 +118,15 @@ class StreamingCreateView(FormView):
         
         if duration and self.request.user.is_authenticated():
             try:
+                time_to_init = form.cleaned_data['init_datetime'] - timezone.now()
+                server = deploy_server.delay(form.cleaned_data['info'], countdown=time_to_init)
                 streaming = Streaming(
                         user = self.request.user,
                         title = form.cleaned_data['title'],
-                        init_date = form.cleaned_data['init_date'],
-                        init_time = form.cleaned_data['init_time'],
+                        init_datetime = form.cleaned_data['init_datetime'],
+                        init_date = form.cleaned_data['init_datetime'].date(),
                         duration = duration,
-                        uuid = uuid4(),
+                        uuid = uuid.UUID(server.id),
                         info = form.cleaned_data['info'],
                         is_public = form.cleaned_data['is_public'],
                         image = form.cleaned_data['image']
@@ -120,8 +140,8 @@ class StreamingCreateView(FormView):
             # saving data to be send to success url
             self.request.session['uuid'] = str(streaming.uuid)
             self.request.session['title'] = str(streaming.title)
-            self.request.session['init_date'] = str(streaming.init_date)
-            self.request.session['init_time'] = str(streaming.init_time)
+            self.request.session['init_date'] = str(streaming.init_datetime.date())
+            self.request.session['init_time'] = str(streaming.init_datetime.time())
             self.request.session['user'] = str(streaming.user)
 
             return super(StreamingCreateView, self).form_valid(form)
