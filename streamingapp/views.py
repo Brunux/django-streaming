@@ -119,7 +119,7 @@ class StreamingCreateView(FormView):
         if duration and self.request.user.is_authenticated():
             try:
                 time_to_init = form.cleaned_data['init_datetime'] - timezone.now()
-                server = deploy_server.delay(form.cleaned_data['info'], countdown=time_to_init)
+                server = deploy_server.apply_async((form.cleaned_data['uuid'],), countdown=int(time_to_init.total_seconds()))
                 streaming = Streaming(
                         user = self.request.user,
                         title = form.cleaned_data['title'],
@@ -132,6 +132,7 @@ class StreamingCreateView(FormView):
                         image = form.cleaned_data['image']
                     )
                 streaming.save()
+                import pdb; pdb.set_trace()
             except:
                 return redirect(error_view)
             # Send email
