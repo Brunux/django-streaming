@@ -16,13 +16,14 @@ class Streaming(models.Model):
     user = models.ForeignKey(User)
     title = models.CharField(max_length=128)
     init_datetime = models.DateTimeField(auto_now=False, auto_now_add=False)
-    init_date = models.DateTimeField(auto_now=False, auto_now_add=False)
+    init_date = models.DateField(auto_now=False, auto_now_add=False)
     duration = models.CharField(
         max_length=2,
         choices=DURATION_CHOICES,
         default=HALF,
     )
     uuid = models.UUIDField()
+    droplet = models.TextField()
     info = models.TextField()
     is_public = models.BooleanField(default=True)
     image = models.ImageField(upload_to='streaming_images',

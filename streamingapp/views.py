@@ -6,8 +6,7 @@ from .forms import StreamingForm, UserCreateForm
 from .models import Streaming
 from django.shortcuts import redirect
 from django.http import HttpResponse
-from datetime import time
-from django.utils import timezone
+from datetime import datetime, time
 import re, uuid
 
 from django.template.loader import get_template
@@ -63,16 +62,16 @@ class Home(django.views.generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
         # Streamings filter by today
-        streamings = Streaming.objects.filter(init_date=timezone.now().date())
+        streamings = Streaming.objects.filter(init_date=datetime.now().date())
         if len(streamings) == 0:
             context['streaming'] = False
             context['streamings'] = False
             context['time_to_init'] = False
         elif len(streamings) == 1:
-            if (streamings[0].init_datetime - timezone.now()).total_seconds() > 0:
+            if (streamings[0].init_datetime.replace(tzinfo=None) - datetime.now().replace(tzinfo=None)).total_seconds() > 0:
                 context['streaming'] = streamings[0]
                 
-                hours, minutes = hours_minutes(streamings[0].init_datetime - timezone.now())
+                hours, minutes = hours_minutes(streamings[0].init_datetime.replace(tzinfo=None) - datetime.now().replace(tzinfo=None))
                 context['streaming'].time_to_init = {'hours': hours , 'minutes': minutes} 
                 
                 context['streamings'] = False
@@ -83,10 +82,10 @@ class Home(django.views.generic.TemplateView):
             x = 0
             context['streamings'] = []
             for streaming in streamings:
-                if (streaming.init_datetime - timezone.now()).total_seconds() > 0:
+                if (streaming.init_datetime.replace(tzinfo=None) - datetime.now().replace(tzinfo=None)).total_seconds() > 0:
                     context['streamings'].insert(x, streaming)
                     
-                    hours, minutes = hours_minutes(streaming.init_datetime - timezone.now())
+                    hours, minutes = hours_minutes(streaming.init_datetime.replace(tzinfo=None) - datetime.now().replace(tzinfo=None))
                     context['streamings'][x].time_to_init = {'hours': hours , 'minutes': minutes}
                     
                     if len(streaming.title) > 50:
@@ -102,7 +101,6 @@ class StreamingCreateView(FormView):
     success_url = '/done-create-streaming/'
     
     duration = False
-
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
@@ -118,21 +116,22 @@ class StreamingCreateView(FormView):
         
         if duration and self.request.user.is_authenticated():
             try:
-                time_to_init = form.cleaned_data['init_datetime'] - timezone.now()
-                server = deploy_server.apply_async((form.cleaned_data['uuid'],), countdown=int(time_to_init.total_seconds()))
+                uuid_gen = uuid.uuid4()
+                time_to_init = form.cleaned_data['init_datetime'].replace(tzinfo=None) - datetime.now().replace(tzinfo=None)
+                # Add deploy server task
+                deploy_server.apply_async((str(uuid_gen),), countdown=int(time_to_init.total_seconds()))
                 streaming = Streaming(
                         user = self.request.user,
                         title = form.cleaned_data['title'],
-                        init_datetime = form.cleaned_data['init_datetime'],
+                        init_datetime = form.cleaned_data['init_datetime'].replace(tzinfo=None),
                         init_date = form.cleaned_data['init_datetime'].date(),
                         duration = duration,
-                        uuid = uuid.UUID(server.id),
+                        uuid = uuid_gen,
                         info = form.cleaned_data['info'],
                         is_public = form.cleaned_data['is_public'],
                         image = form.cleaned_data['image']
                     )
                 streaming.save()
-                import pdb; pdb.set_trace()
             except:
                 return redirect(error_view)
             # Send email
