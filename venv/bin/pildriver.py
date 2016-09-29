@@ -1,4 +1,4 @@
-#!/home/ubuntu/workspace/vc-streaming/venv/bin/python
+#!/root/vc-streaming-app/venv/bin/python
 """PILdriver, an image-processing calculator using PIL.
 
 An instance of class PILDriver is essentially a software stack machine

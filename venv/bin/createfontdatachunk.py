@@ -1,4 +1,4 @@
-#!/home/ubuntu/workspace/vc-streaming/venv/bin/python
+#!/root/vc-streaming-app/venv/bin/python
 from __future__ import print_function
 import base64
 import os

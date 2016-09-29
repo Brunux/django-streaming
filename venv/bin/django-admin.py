@@ -1,4 +1,4 @@
-#!/home/ubuntu/workspace/vc-streaming/venv/bin/python
+#!/root/vc-streaming-app/venv/bin/python
 from django.core import management
 
 if __name__ == "__main__":
