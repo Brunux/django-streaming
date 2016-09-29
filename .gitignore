@@ -9,3 +9,5 @@ settings.py
 media/*
 
 venv
+
+start-janus.sh 

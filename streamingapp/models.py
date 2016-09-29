@@ -23,7 +23,6 @@ class Streaming(models.Model):
         default=HALF,
     )
     uuid = models.UUIDField()
-    droplet = models.TextField()
     info = models.TextField()
     is_public = models.BooleanField(default=True)
     image = models.ImageField(upload_to='streaming_images',

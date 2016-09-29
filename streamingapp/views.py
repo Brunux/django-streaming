@@ -119,7 +119,7 @@ class StreamingCreateView(FormView):
                 uuid_gen = uuid.uuid4()
                 time_to_init = form.cleaned_data['init_datetime'].replace(tzinfo=None) - datetime.now().replace(tzinfo=None)
                 # Add deploy server task
-                deploy_server.apply_async((str(uuid_gen),), countdown=int(time_to_init.total_seconds()))
+                # deploy_server.apply_async((str(uuid_gen),), countdown=int(time_to_init.total_seconds()))
                 streaming = Streaming(
                         user = self.request.user,
                         title = form.cleaned_data['title'],
