@@ -23,6 +23,13 @@ Install dependencies
 ``` bash
     $ pip install -r requirements.txt
 ```
+Configure your own settings.py
+``` bash
+    $ vim project/settings.py
+    ... (this is going to be empty)
+    ... (Configure you own settings here)
+    ... (save)
+```
 Prepare the DB by doing magrations
 ``` bash
     $ python manage.py migrate
