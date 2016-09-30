@@ -64,7 +64,6 @@ class Home(django.views.generic.TemplateView):
         context = super(Home, self).get_context_data(**kwargs)
         # Streamings filter by today
         today = datetime.now(pytz.utc)
-        import pdb; pdb.set_trace()
         streamings = Streaming.objects.filter(init_date=today.date())
         if len(streamings) == 0:
             context['streaming'] = False

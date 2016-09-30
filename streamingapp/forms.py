@@ -12,9 +12,9 @@ class StreamingForm(forms.ModelForm):
         model = Streaming
         fields = ['title', 'init_datetime', 'duration', 'info', 'is_public', 'image']
         widgets = {
-            'title': forms.Textarea(attrs={'rows': 1, 'placeholder': 'Meetup Python: Web apps con Django'}),
-            'info': forms.Textarea(attrs={'rows': 5, 'placeholder': 'En este streaming mostraremos como crear una aplicacion web usando Django framework'}),
-            'init_datetime': DateTimeWidget(attrs={'placeholder': 'AAAA-MM-DD HH-MM-SS','id': 'id_init_datetime'}, usel10n=True, bootstrap_version=3),
+            'title': forms.Textarea(attrs={"rows": 1, "class": "form-control", 'placeholder': 'Meetup Python: Web apps con Django'}),
+            'info': forms.Textarea(attrs={"rows": 5, "class": "form-control", 'placeholder': 'En este streaming mostraremos como crear una aplicacion web usando Django framework'}),
+            'init_datetime': DateTimeWidget(options={"format": "yyyy/mm/dd hh:ii:ss"}, attrs={'placeholder': 'AAAA-MM-DD hh:mm:ss','id': 'id_init_datetime'}, usel10n=True, bootstrap_version=3),
         }
         labels = {
             'title': _('Titulo'),
