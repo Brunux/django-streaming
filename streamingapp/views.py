@@ -63,18 +63,18 @@ class Home(django.views.generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
         # Streamings filter by today
-        today = datetime.now(pytz.utc)
+        today = datetime.now(tz=MEXICO_CITY)
         streamings = Streaming.objects.filter(init_date=today.date())
         if len(streamings) == 0:
             context['streaming'] = False
             context['streamings'] = False
             context['time_to_init'] = False
         elif len(streamings) == 1:
-            if (streamings[0].init_datetime - datetime.now(pytz.utc)).total_seconds() > 0:
+            if (streamings[0].init_datetime - datetime.now(tz=MEXICO_CITY)).total_seconds() > 0:
                 context['streaming'] = streamings[0]
                 
-                hours, minutes = hours_minutes(streamings[0].init_datetime - datetime.now(pytz.utc))
-                context['streaming'].time_to_init = {'hours': hours , 'minutes': minutes} 
+                hours, minutes = hours_minutes(streamings[0].init_datetime - datetime.now(tz=MEXICO_CITY))
+                context['streaming'].time_to_init = {'hours': hours , 'minutes': minutes}
                 
                 context['streamings'] = False
             if len(streamings[0].title) > 50:
@@ -84,10 +84,10 @@ class Home(django.views.generic.TemplateView):
             x = 0
             context['streamings'] = []
             for streaming in streamings:
-                if (streaming.init_datetime - datetime.now(pytz.utc)).total_seconds() > 0:
+                if (streaming.init_datetime - datetime.now(tz=MEXICO_CITY)).total_seconds() > 0:
                     context['streamings'].insert(x, streaming)
                     
-                    hours, minutes = hours_minutes(streaming.init_datetime - datetime.now(pytz.utc))
+                    hours, minutes = hours_minutes(streaming.init_datetime - datetime.now(tz=MEXICO_CITY))
                     context['streamings'][x].time_to_init = {'hours': hours , 'minutes': minutes}
                     
                     if len(streaming.title) > 50:
@@ -119,11 +119,12 @@ class StreamingCreateView(FormView):
         if duration and self.request.user.is_authenticated():
             try:
                 to_save_uuid = uuid.uuid4()
-                to_save_init_date = form.cleaned_data['init_datetime'].astimezone(pytz.utc).date()
-                to_save_init_datetime = form.cleaned_data['init_datetime'].astimezone(pytz.utc)
+                to_save_init_datetime = form.cleaned_data['init_datetime'].astimezone(MEXICO_CITY)
+                to_save_init_date = to_save_init_datetime.date()
+                
                 # Add deploy server task
-                # time_to_init = form.cleaned_data['init_datetime'].astimezone(pytz.utc) - datetime.now(pytz.utc)
-                # deploy_server.apply_async((str(to_save_uuid),), countdown=int(time_to_init.total_seconds()))
+                #time_to_init = form.cleaned_data['init_datetime'].astimezone(MEXICO_CITY) - datetime.now(tz=MEXICO_CITY)
+                #deploy_server.apply_async((str(to_save_uuid),), countdown=int(time_to_init.total_seconds()))
                 streaming = Streaming(
                         user = self.request.user,
                         title = form.cleaned_data['title'],
@@ -144,8 +145,8 @@ class StreamingCreateView(FormView):
             # saving data to be send to success url
             self.request.session['uuid'] = str(streaming.uuid)
             self.request.session['title'] = str(streaming.title)
-            self.request.session['init_date'] = str(streaming.init_datetime.astimezone(MEXICO_CITY).date())
-            self.request.session['init_time'] = str(streaming.init_datetime.astimezone(MEXICO_CITY).time())
+            self.request.session['init_date'] = str(streaming.init_datetime.date())
+            self.request.session['init_time'] = str(streaming.init_datetime.time())
             self.request.session['user'] = str(streaming.user)
 
             return super(StreamingCreateView, self).form_valid(form)
