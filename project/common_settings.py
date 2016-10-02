@@ -61,9 +61,11 @@ INSTALLED_APPS = [
     'streamingapp',
     
     # 3rd party apps
-    'datetimewidget',
-
+    'datetimewidget'
 ]
+# Develepment Proxy to proxy Janus request internally
+if DEBUG:
+    INSTALLED_APPS.append('httpproxy')
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',

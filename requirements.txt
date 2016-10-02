@@ -8,6 +8,7 @@ celery==3.1.23
 colorlog==2.7.0
 django-celery==3.1.17
 django-datetime-widget==0.9.3
+django-http-proxy==0.4.3
 kombu==3.0.35
 pytz==2016.6.1
 wsgiref==0.1.2

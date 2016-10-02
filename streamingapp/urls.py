@@ -18,7 +18,8 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    from httpproxy.views import HttpProxy
     urlpatterns += [
-        url(r"^media/(?P<path>.*)$", serve,
-        {'document_root': settings.MEDIA_ROOT,}),
+        url(r"^media/(?P<path>.*)$", serve, {'document_root': settings.MEDIA_ROOT,}),
+        url(r"^janus/(?P<url>.*)$", HttpProxy.as_view(base_url='https://streaming-brunux.c9users.io:8081/janus')),
 ]
