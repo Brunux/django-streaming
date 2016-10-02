@@ -1,7 +1,13 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+{% block header %}
+  <script src="{% static 'js/janus.js' %}" ></script>
+  <script src="{% static 'js/adapter.js' %}" ></script>
+  <script src="{% static 'js/chat.js' %}"></script>
+{% endblock %}
 
 {% block content %}
-<h1 class="logo-header">Live Video Streaming...</h1><br>
+<h1 class="logo-header" id="header-data" uuid="{{ streaming.uuid }}" client="{{request.user}}">Live Video Streaming...</h1><br>
 <div class="row">
   <div class="panel panel-info paggind-off">
     <div class="panel-heading">{{ streaming.title }} </div>
@@ -17,17 +23,17 @@
       </div>
     </div>
   <div class="panel-footer">Anfitrion: <a href="mailto:{{streaming.user.email}}">{{streaming.user}}</a><span class="badge pull-right">42 online</span></div>
-    <div class="panel-body">
+    <div class="panel-body relative" style="overflow-x: auto;" id="chatroom">
       <div>chat...</div>
     </div>
     <div class="panel-footer">
       <div class="row">
         <div class="container-fluid">
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Preguntas?">
+            <input type="text" class="form-control" placeholder="Preguntas?" id="datasend" onkeypress="return checkEnter(this, event);">
             <span class="input-group-btn">
               <!-- Button trigger modal -->
-              <button class="btn btn-info" type="button" data-toggle="modal" data-target="#myModal">Enviar</button>
+              <button class="btn btn-info" type="button" onclick="sendData();">Enviar</button>
             </span>
           </div><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
