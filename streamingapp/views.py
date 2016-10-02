@@ -167,7 +167,14 @@ class StreamingViewLinked(django.views.generic.TemplateView):
         context = super(StreamingViewLinked, self).get_context_data(**kwargs)
         # Need to get streaming object by URL to pass to the template tags,
         # check URL dispatcher docs.
-        context['streaming'] = Streaming.objects.get(uuid=self.request.path.replace("/",""))
+        try:
+            streaming = Streaming.objects.get(uuid=self.request.path.replace("/",""))
+        except:
+            return redirect(error_view)
+        if not streaming:
+            return redirect(error_view)
+        else:
+            context['streaming'] = streaming
         return context
 streaming_view_linked = StreamingViewLinked.as_view()
 
