@@ -1,10 +1,10 @@
-var server = null;
+/*var server = null;
 if(window.location.protocol === 'http:')
 	server = "http://" + window.location.hostname + ":8081/janus";
 else
 	server = "https://" + window.location.hostname + ":8082/janus";
-
-//server = "https://janus.conf.meetecho.com/janus" // debug server
+*/
+var server = "https://streaming-brunux.c9users.io/janus/"; // locally proxyed check urls file
 var janus = null;
 var textroom = null;
 
@@ -243,3 +243,4 @@ function randomString(len, charSet) {
     }
     return randomString;
 }
+
