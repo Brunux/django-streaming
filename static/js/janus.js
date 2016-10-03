@@ -287,6 +287,8 @@ function Janus(gatewayCallbacks) {
 			Janus.warn("Is the gateway down? (connected=false)");
 			return;
 		}
+		// remove "/" due proxy problems check commente line below
+		//var longpoll = server + sessionId + "?rid=" + new Date().getTime();
 		var longpoll = server + "/" + sessionId + "?rid=" + new Date().getTime();
 		if(maxev !== undefined && maxev !== null)
 			longpoll = longpoll + "&maxev=" + maxev;

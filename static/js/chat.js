@@ -61,7 +61,7 @@ $(document).ready(function() {
 		                         }
 		                         if(jsep !== undefined && jsep !== null) {
 		                             // Answere
-		                             textroom.createAnswar(
+		                             textroom.createAnswer(
 		                                 {
 		                                     jsep: jsep,
 		                                     media: { audio: false, video: false, data: true}, // Text message pass through data channels

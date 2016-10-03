@@ -22,5 +22,5 @@ if settings.DEBUG:
     from django.views.decorators.csrf import csrf_exempt
     urlpatterns += [
         url(r"^media/(?P<path>.*)$", serve, {'document_root': settings.MEDIA_ROOT,}),
-        url(r"^janus/(?P<url>.*)$", csrf_exempt(HttpProxy.as_view(base_url='https://streaming-brunux.c9users.io:8081/janus',  rewrite=False))),
+        url(r"^janus/(?P<url>.*)$", csrf_exempt(HttpProxy.as_view(base_url='https://janus.conf.meetecho.com/janus',  rewrite=False))),
         ]
