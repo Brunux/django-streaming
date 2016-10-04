@@ -7,10 +7,11 @@ else
 var server = "https://streaming-brunux.c9users.io/janus/"; // locally proxyed check urls file
 var janus = null;
 var textroom = null;
+var registered = false
 
-var room = $('#header-data').attr("uuid");
-var client = $('#header-data').attr("client");
-var clientId = null;
+var myroom = 1234;
+var myusername = null;
+var myid = null;
 var participants = {}
 var transactions = {}
 
@@ -20,7 +21,7 @@ $(document).ready(function() {
 	Janus.init({debug: "all", callback: function() {
 		// Use a button to start the demo
 		if(!Janus.isWebrtcSupported()) {
-			bootbox.alert("No WebRTC support... ");
+			alert("Lo sentimos, tu navegador no soporta communicacion en tiempo real\nCambia a Google Chrome");
 			return;
 			
 		} else {
@@ -51,7 +52,6 @@ $(document).ready(function() {
 		                     },
 		                     webrtcState: function(on) {
 		                         Janus.log("Janus says our WebRTC PeerConnection is " + (on ? "up" : "down") + " now");
-		                         $("#videoleft").parent().unblock();
 		                     },
 		                     onmessage: function(msg, jsep) {
 		                         Janus.debug(" ::: Got a message :::");
@@ -65,7 +65,7 @@ $(document).ready(function() {
 		                                 {
 		                                     jsep: jsep,
 		                                     media: { audio: false, video: false, data: true}, // Text message pass through data channels
-		                                     success: function () {
+		                                     success: function (jsep) {
 		                                         Janus.debug("Got SDP!");
 		                                         Janus.debug(jsep);
 		                                         var body = { "request": "ack" };
@@ -73,7 +73,7 @@ $(document).ready(function() {
 		                                     },
 		                                     error: function(error) {
 		                                         Janus.error("WebRTC error:", error);
-		                                         bootbox.alert("WebRTC error... " + JSON.stringify(error));
+		                                         alert("WebRTC error... " + JSON.stringify(error));
 		                                     }
 		                                 });
 		                         }
@@ -81,7 +81,6 @@ $(document).ready(function() {
 		                     ondataopen: function(data) {
 		                         Janus.log("The DataChannel is available!");
 		                         // Optional prompt for a display name to join the default room
-		                         registerUsername();
 		                     },
 		                     ondata: function(data) {
 		                         Janus.debug("We got data from the DataChannel! " + data);
@@ -103,24 +102,20 @@ $(document).ready(function() {
 		                             msg = msg.replace(new RegExp('>', 'g'), '&gt');
 		                             var from = json["from"];
 		                             var dateString = getDateString(json["date"]);
-		                             var whisper = json["whisper"];
-		                             if(whisper === false) {
-		                                 // Public Message
-		                                 $('#chatroom').append('<p>[' + dateString + '] <b>' + participants[from] + ':</b> ' + msg);
-		                                 $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
-		                             }
+	                                 $('#chatroom').append('<p>[' + dateString + '] <b>' + participants[from] + ':</b> ' + msg);
+	                                 $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
 		                         } else if(what === "join") {
 		                             // Somebody joined
 		                             var username = json["username"];
 		                             var display = json["display"];
 		                             participants[username] = display ? display : username;
-		                             $('#chatroom').append('<p style="color: green;">[' + getDateString() + '] <i>' + participants[username] + ' joined</i></p>');
+		                             $('#chatroom').append('<p style="color: green;">[' + getDateString() + '] <i>' + participants[username] + ' se unió</i></p>');
 		                             $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
 		                         } else if(what === "leave") {
 		                             // Somebody left
 		                             var username = json["username"];
 		                             var when = new Date();
-		                             $('#chatroom').append('<p style="color: red;">[' + getDateString() + '] <i>' + participants[username] + ' left</i></p>');
+		                             $('#chatroom').append('<p style="color: red;">[' + getDateString() + '] <i>' + participants[username] + ' Se fue</i></p>');
 		                             $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
 		                             delete participants[username];
 		                         } else if(what === "destroyed") {
@@ -157,16 +152,17 @@ function checkEnter(field, event) {
 }
 
 function registerUsername() {
-	clientId = randomString(12);
+	myid = randomString(12);
+	var username = $('#header-data').attr("client");
 	var transaction = randomString(12);
 	var register = {
 		textroom: "join",
 		transaction: transaction,
-		room: room,
-		username: clientId,
-		display: client
+		room: myroom,
+		username: myid,
+		display: username
 	};
-	//myusername = client;
+	myusername = username;
 	transactions[transaction] = function(response) {
 		if(response["textroom"] === "error") {
 			// Something went wrong
@@ -174,7 +170,7 @@ function registerUsername() {
 			return;
 		}
 		// We're in
-		$('#chatroom').css('height', ($(window).height()-420)+"px");
+		$('#chatroom').css('height', ($(window).height()-820)+"px"),
 		//$('#datasend').removeAttr('disabled');
 		// Any participants already in?
 		console.log("Participants:", response.participants);
@@ -182,10 +178,11 @@ function registerUsername() {
 			for(var i in response.participants) {
 				var p = response.participants[i];
 				participants[p.username] = p.display ? p.display : p.username;
-				$('#chatroom').append('<p style="color: green;">[' + getDateString() + '] <i>' + participants[p.username] + ' joined</i></p>');
+				$('#chatroom').append('<p style="color: green;">[' + getDateString() + '] <i>' + participants[p.username] + ' se unió</i></p>');
 				$('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
 			}
 		}
+		$('#participants').html(Object.keys(participants).length.toString() + ' online');
 	};
 	textroom.data({
 		text: JSON.stringify(register),
@@ -193,20 +190,25 @@ function registerUsername() {
 			alert(reason);
 		}
 	});
+	registered = true 
 }
 
 
 function sendData() {
+    if(!registered) {
+        registerUsername()
+    }
 	var data = $('#datasend').val();
 	if(data === "") {
-		alert('Insert a message to send on the DataChannel');
+		alert('Escribe un mensaje a enviar...');
 		return;
 	}
 	var message = {
 		textroom: "message",
 		transaction: randomString(12),
-		room: room,
+		room: myroom,
  		text: data,
+ 		whisper: false,
 	};
 	// Note: messages are always acknowledged by default. This means that you'll
 	// always receive a confirmation back that the message has been received by the
@@ -227,9 +229,9 @@ function getDateString(jsonDate) {
 		when = new Date(Date.parse(jsonDate));
 	}
 	var dateString =
-			("0" + when.getUTCHours()).slice(-2) + ":" +
-			("0" + when.getUTCMinutes()).slice(-2) + ":" +
-			("0" + when.getUTCSeconds()).slice(-2);
+			("0" + when.getHours()).slice(-2) + ":" +
+			("0" + when.getMinutes()).slice(-2) + ":" +
+			("0" + when.getSeconds()).slice(-2);
 	return dateString;
 }
 
@@ -243,4 +245,3 @@ function randomString(len, charSet) {
     }
     return randomString;
 }
-
