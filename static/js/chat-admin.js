@@ -69,7 +69,7 @@ $(document).ready(function() {
 		                             textroom.createAnswer(
 		                                 {
 		                                     jsep: jsep,
-		                                     media: { audioSend: false, videoSend: false, audio: true, video: false, data: true}, // Text message pass through data channels
+		                                     media: { audio: true, video: false, data: true}, // Text message pass through data channels
 		                                     success: function (jsep) {
 		                                         Janus.debug("Got SDP!");
 		                                         Janus.debug(jsep);
@@ -146,7 +146,7 @@ $(document).ready(function() {
 								},
 								error: function(error) {
 									Janus.error("  -- Error attaching plugin...", error);
-									alert("Error attaching plugin... " + error);
+									bootbox.alert("Error attaching plugin... " + error);
 								},
 								consentDialog: function(on) {
 									// Check docs to see what options are for this
@@ -160,12 +160,13 @@ $(document).ready(function() {
 									if(event != undefined && event != null) {
 										if(event === "joined") {
 											// Successfully joined, negotiate WebRTC now
+											console.log("Joinig to channel Audio");
 											myid = msg["id"];
 											Janus.log("Successfully joined room " + msg["room"] + " with ID " + myid);
 											if(!webrtcUp) {
 												webrtcUp = true;
 												// Publish our stream
-												/*mixertest.createOffer(
+												mixertest.createOffer(
 													{
 														media: { video: false},	// This is an audio only room
 														success: function(jsep) {
@@ -178,7 +179,7 @@ $(document).ready(function() {
 															Janus.error("WebRTC error:", error);
 															bootbox.alert("WebRTC error... " + JSON.stringify(error));
 														}
-													});*/
+													});
 											}
 											/*// Any room participant?
 											if(msg["participants"] !== undefined && msg["participants"] !== null) {
@@ -279,6 +280,17 @@ $(document).ready(function() {
 									/*$('#audiojoin').hide();
 									$('#room').removeClass('hide').show();
 									$('#participant').removeClass('hide').html(myusername).show();*/
+									// Mute button
+									audioenabled = true;
+									$('#toggleaudio').click(
+										function() {
+											audioenabled = !audioenabled;
+											if(audioenabled)
+												$('#toggleaudio').html("Silenciar").removeClass("btn-success").addClass("btn-danger");
+											else
+												$('#toggleaudio').html("Desilenciar").removeClass("btn-danger").addClass("btn-success");
+											mixertest.send({message: { "request": "configure", "muted": !audioenabled }});
+										}).removeClass('hide').show();
 								},
 								onremotestream: function(stream) {
 								    console.log("Attaching Media Audio");

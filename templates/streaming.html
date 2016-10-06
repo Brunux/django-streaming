@@ -3,14 +3,18 @@
 {% block header %}
   <script src="{% static 'js/janus.js' %}" ></script>
   <script src="{% static 'js/adapter.js' %}" ></script>
-  <script src="{% static 'js/chat.js' %}"></script>
+  {% if streaming.user == request.user %}
+    <script src="{% static 'js/chat-admin.js' %}"></script>
+  {% else %}
+    <script src="{% static 'js/chat.js' %}"></script>
+  {% endif %}
 {% endblock %}
 
 {% block content %}
 <h1 class="logo-header" id="header-data" uuid="{{ streaming.uuid }}" client="{{request.user}}">Live Video Streaming...</h1><br>
 <div class="row">
   <div class="panel panel-info paggind-off">
-    <div class="panel-heading">{{ streaming.title }} </div>
+    <div class="panel-heading">{{ streaming.title }} <button class="btn-xs btn-danger hide pull-right" autocomplete="off" id="toggleaudio">Silenciar</button></h3></div>
     <div class="panel-body">
       <div class="alert alert-warning alert-dismissible fade in" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -40,8 +44,11 @@
       </div>
     </div>
   </div>
-</div><br>
-<p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
+</div>
+<div id="mixedaudio">
+  <!-- Audio -->
+</div>*Si estas teniendo algun problema con este Streaming por favor recarga la pagina.<br>
+<br><p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
   Si tienes alguna duda puedes escribir a <a href="mailto:hola@compartoskill.com">hola@compartoskill.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
