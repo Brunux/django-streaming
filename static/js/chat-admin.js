@@ -69,7 +69,7 @@ $(document).ready(function() {
 		                             textroom.createAnswer(
 		                                 {
 		                                     jsep: jsep,
-		                                     media: { audio: true, video: false, data: true}, // Text message pass through data channels
+		                                     media: { audio: false, video: false, data: true}, // Text message pass through data channels
 		                                     success: function (jsep) {
 		                                         Janus.debug("Got SDP!");
 		                                         Janus.debug(jsep);

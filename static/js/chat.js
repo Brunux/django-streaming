@@ -69,7 +69,7 @@ $(document).ready(function() {
 		                             textroom.createAnswer(
 		                                 {
 		                                     jsep: jsep,
-		                                     media: { audioSend: false, videoSend: false, audio: true, video: false, data: true}, // Text message pass through data channels
+		                                     media: { audio: false, video: false, data: true}, // Text message pass through data channels
 		                                     success: function (jsep) {
 		                                         Janus.debug("Got SDP!");
 		                                         Janus.debug(jsep);
@@ -162,24 +162,26 @@ $(document).ready(function() {
 											// Successfully joined, negotiate WebRTC now
 											myid = msg["id"];
 											Janus.log("Successfully joined room " + msg["room"] + " with ID " + myid);
-											if(!webrtcUp) {
-												webrtcUp = true;
-												// Publish our stream
-												/*mixertest.createOffer(
-													{
-														media: { video: false},	// This is an audio only room
-														success: function(jsep) {
-															Janus.debug("Got SDP!");
-															Janus.debug(jsep);
-															var publish = { "request": "configure", "muted": false };
-															mixertest.send({"message": publish, "jsep": jsep});
-														},
-														error: function(error) {
-															Janus.error("WebRTC error:", error);
-															bootbox.alert("WebRTC error... " + JSON.stringify(error));
-														}
-													});*/
-											}
+										if(!webrtcUp) {
+											webrtcUp = true;
+											// Responding to the Streaming
+											mixertest.createAnswer(
+												{
+													jsep: jsep,
+													// We want recvonly audio/video
+													media: { audioSend: false, videoSend: false, audio: true, video: false, data: false},	// This is an audio only room
+													success: function(ourjsep) {
+														Janus.debug("Got SDP!");
+														Janus.debug(ourjsep);
+														var body = { "request": "configure", "muted": true };
+														mixertest.send({"message": body, "jsep": ourjsep});
+													},
+													error: function(error) {
+														Janus.error("WebRTC error:", error);
+														bootbox.alert("WebRTC error... " + JSON.stringify(error));
+													}
+												});
+										}
 											/*// Any room participant?
 											if(msg["participants"] !== undefined && msg["participants"] !== null) {
 												var list = msg["participants"];
@@ -335,7 +337,7 @@ function registerUsername() {
 			return;
 		}
 		// We're in
-		$('#chatroom').css('height', ($(window).height()-820)+"px"),
+		$('#chatroom').css('height', ($(window).height()-420)+"px"),
 		//$('#datasend').removeAttr('disabled');
 		// Any participants already in?
 		console.log("Participants:", response.participants);
