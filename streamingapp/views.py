@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 
-import django.views.generic
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, CreateView
-from .forms import StreamingForm, UserCreateForm
-from .models import Streaming
 from django.shortcuts import redirect
 from django.http import HttpResponse
-from datetime import datetime, time
-import re, uuid, pytz
-
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
-
 from django.contrib.auth.models import User
-from  django.contrib.auth import hashers
+from django.contrib.auth import hashers
+from .forms import StreamingForm, UserCreateForm
+from .models import Streaming
 
 from taskapp.tasks import deploy_server
+from datetime import datetime, time
+import re, uuid, pytz
 
 MEXICO_CITY = pytz.timezone('America/Mexico_City')
 
@@ -58,8 +56,9 @@ def send_email(streaming):
     except:
         return HttpResponse('Request Error')
 
-class Home(django.views.generic.TemplateView):
+class Home(TemplateView):
     template_name = "home.html"
+    
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
         # Streamings filter by today
@@ -154,13 +153,14 @@ class StreamingCreateView(FormView):
 streaming_create_view = StreamingCreateView.as_view()
 
 # This should be used with the home form to access a streaming with a given uuid.
-class StreamingView(django.views.generic.TemplateView):
+class StreamingView(TemplateView):
     template_name = "streaming.html"
+
 streaming_view = StreamingView.as_view()
 
 # This should be used with the home streamings links avalables to access the
 # selected streaming.
-class StreamingViewLinked(django.views.generic.TemplateView):
+class StreamingViewLinked(TemplateView):
     template_name = "streaming.html"
     
     def get_context_data(self, **kwargs):
@@ -179,14 +179,14 @@ class StreamingViewLinked(django.views.generic.TemplateView):
 streaming_view_linked = StreamingViewLinked.as_view()
 
 # This should be used to render a successful streaming added
-class DoneCreateStreamingView(django.views.generic.TemplateView):
+class DoneCreateStreamingView(TemplateView):
     template_name = "done-create-streaming.html"
     context_object_name = 'streaming'
 
 done_create_streaming_view = DoneCreateStreamingView.as_view()
 
 # This should be used to display all posible errors
-class ErrorView(django.views.generic.TemplateView):
+class ErrorView(TemplateView):
     template_name = "error.html"
 error_view = ErrorView.as_view()
 
@@ -208,6 +208,7 @@ def send_email_guest(request):
         else:
             return HttpResponse('No hacking dude!')
 
+# View for creating new users
 class CreateUser(FormView):
     template_name = "create-user.html"
     form_class = UserCreateForm
