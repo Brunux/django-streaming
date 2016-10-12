@@ -34,245 +34,245 @@ $(document).ready(function() {
 		}
 		// Creating the session
 		janus = new Janus(
-		    {
-		        server: server,
-		        success: function() {
-		             // Attach to textroom plugin
-		             console.log("En exito!");
-		             janus.attach(
-		                 {
-		                     plugin: "janus.plugin.textroom",
-		                     success: function(pluginHandle) {
-		                         textroom = pluginHandle;
-		                         Janus.log("Plugin attached! (" + textroom.getPlugin() + ", id=" + textroom.getId() + ")");
-		                         // Seting up data channel
-		                         var body = {"request": "setup"}
-		                         Janus.debug("Sending message (" + JSON.stringify(body) + ")");
-		                         textroom.send({"message": body});
-		                     },
-		                     error: function(error) {
-		                         console.error("  -- Error attaching plugin...", error);
-		                         alert("Error attaching plugin... " + error);
-		                         
-		                     },
-		                     webrtcState: function(on) {
-		                         Janus.log("Janus says our WebRTC PeerConnection is " + (on ? "up" : "down") + " now");
-		                     },
-		                     onmessage: function(msg, jsep) {
-		                         Janus.debug(" ::: Got a message :::");
-		                         Janus.debug(JSON.stringify(msg));
-		                         if(msg["error"] !== undefined && msg["error"] !== null) {
-		                             alert(msg["error"]);
-		                         }
-		                         if(jsep !== undefined && jsep !== null) {
-		                             // Answere
-		                             textroom.createAnswer(
-		                                 {
-		                                     jsep: jsep,
-		                                     media: { audio: false, video: false, data: true}, // Text message pass through data channels
-		                                     success: function (jsep) {
-		                                         Janus.debug("Got SDP!");
-		                                         Janus.debug(jsep);
-		                                         var body = { "request": "ack" };
-		                                         textroom.send({"message": body, "jsep": jsep});
-		                                     },
-		                                     error: function(error) {
-		                                         Janus.error("WebRTC error:", error);
-		                                         alert("WebRTC error... " + JSON.stringify(error));
-		                                     }
-		                                 });
-		                         }
-		                     },
-		                     ondataopen: function(data) {
-		                         Janus.log("The DataChannel is available!");
-		                         // Optional prompt for a display name to join the default room
-		                     },
-		                     ondata: function(data) {
-		                         Janus.debug("We got data from the DataChannel! " + data);
-		                         var json = JSON.parse(data);
-		                         var transaction = json["transaction"];
-		                         if(transactions[transaction]) {
-		                             // Someone was waiting for this
-		                             transactions[transaction](json);
-		                             delete transactions[transaction];
-		                             return;
-		                         }
-		                         var what = json["textroom"];
-		                         // Incoming message: public or private?
-		                         if(what === "message") {
-		                             var msg = json["text"];
-		                             console.log("Got message!!");
-		                             console.log(json["text"]);
-		                             msg = msg.replace(new RegExp('<', 'g'), '&lt');
-		                             msg = msg.replace(new RegExp('>', 'g'), '&gt');
-		                             var from = json["from"];
-		                             var dateString = getDateString(json["date"]);
-	                                 $('#chatroom').append('<p>[' + dateString + '] <b>' + participants[from] + ':</b> ' + msg);
-	                                 $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
-		                         } else if(what === "join") {
-		                             // Somebody joined
-		                             var username = json["username"];
-		                             var display = json["display"];
-		                             participants[username] = display ? display : username;
-		                             $('#participants').html(Object.keys(participants).length.toString() + ' online');
-		                             $('#chatroom').append('<p style="color: green;">[' + getDateString() + '] <i>' + participants[username] + ' se unió</i></p>');
-		                             $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
-		                         } else if(what === "leave") {
-		                             // Somebody left
-		                             var username = json["username"];
-		                             var when = new Date();
-		                             $('#chatroom').append('<p style="color: red;">[' + getDateString() + '] <i>' + participants[username] + ' Se fue</i></p>');
-		                             $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
-		                             delete participants[username];
-		                             $('#participants').html(Object.keys(participants).length.toString() + ' online');
-		                         } else if(what === "destroyed") {
-    		                             // Room was destroyed, goodbye!
-    		                             Janus.warn("The room has been destroyed!");
-		                         }
-		                     },
-		                     oncleanup: function() {
-		                         Janus.log(" ::: Got a cleanup notification :::");
-		                         $('#datasend').attr('disabled', true);
-		                     }
-		                 });
-                    // Attach to Audio Bridge test plugin
+						{
+						server: server,
+						success: function() {
+						// Attach to textroom plugin
+						console.log("En exito!");
 						janus.attach(
-							{
-								plugin: "janus.plugin.audiobridge",
-								success: function(pluginHandle) {
-									mixertest = pluginHandle;
-									Janus.log("Plugin attached! (" + mixertest.getPlugin() + ", id=" + mixertest.getId() + ")");
-									// Prepare the username registration
-								},
-								error: function(error) {
-									Janus.error("  -- Error attaching plugin...", error);
-									alert("Error attaching plugin... " + error);
-								},
-								consentDialog: function(on) {
-									// Check docs to see what options are for this
-									console.log("ON consentDialog");
-								},
-								onmessage: function(msg, jsep) {
-									Janus.debug(" ::: Got a message :::");
-									Janus.debug(JSON.stringify(msg));
-									var event = msg["audiobridge"];
-									Janus.debug("Event: " + event);
-									if(event != undefined && event != null) {
-										if(event === "joined") {
-											// Successfully joined, negotiate WebRTC now
-											myid = msg["id"];
-											Janus.log("Successfully joined room " + msg["room"] + " with ID " + myid);
-											
-											if(!webrtcUp && $('#init').attr("admin") != 'true') {
-												webrtcUp = true;
-												// Publish our stream as client
-												mixertest.createOffer(
-													{
-														media: { audioSend: false, videoSend: false, audio: true, video: false, data: false },	// This is an audio only room
-														success: function(jsep) {
-															Janus.debug("Got SDP!");
-															Janus.debug(jsep);
-															var publish = { "request": "configure", "muted": false };
-															mixertest.send({"message": publish, "jsep": jsep});
-														},
-														error: function(error) {
-															Janus.error("WebRTC error:", error);
-															alert("WebRTC error... " + JSON.stringify(error));
-														}
-													});
-											}
-											/*
-											if(!webrtcUp) {
-												webrtcUp = true;
-												// Responding to the Streaming audio offer
-												mixertest.createAnswer(
-													{
-														jsep: jsep,
-														// We want recvonly audio/video
-														media: { audioSend: false, videoSend: false, audio: true, video: false, data: false},	// This is an audio only room
-														success: function(ourjsep) {
-															Janus.debug("Got SDP!");
-															Janus.debug(ourjsep);
-															var body = { "request": "configure", "muted": true };
-															mixertest.send({"message": body, "jsep": ourjsep});
-														},
-														error: function(error) {
-															Janus.error("WebRTC error:", error);
-															bootbox.alert("WebRTC error... " + JSON.stringify(error));
-														}
+						{
+						 plugin: "janus.plugin.textroom",
+						 success: function(pluginHandle) {
+						     textroom = pluginHandle;
+						     Janus.log("Plugin attached! (" + textroom.getPlugin() + ", id=" + textroom.getId() + ")");
+						     // Seting up data channel
+						     var body = {"request": "setup"}
+						     Janus.debug("Sending message (" + JSON.stringify(body) + ")");
+						     textroom.send({"message": body});
+						 },
+						 error: function(error) {
+						     console.error("  -- Error attaching plugin...", error);
+						     alert("Error attaching plugin... " + error);
+						     
+						 },
+						 webrtcState: function(on) {
+						     Janus.log("Janus says our WebRTC PeerConnection is " + (on ? "up" : "down") + " now");
+						 },
+						 onmessage: function(msg, jsep) {
+						     Janus.debug(" ::: Got a message :::");
+						     Janus.debug(JSON.stringify(msg));
+						     if(msg["error"] !== undefined && msg["error"] !== null) {
+						         alert(msg["error"]);
+						     }
+						     if(jsep !== undefined && jsep !== null) {
+						         // Answere
+						         textroom.createAnswer(
+						             {
+						                 jsep: jsep,
+						                 media: { audio: false, video: false, data: true}, // Text message pass through data channels
+						                 success: function (jsep) {
+						                     Janus.debug("Got SDP!");
+						                     Janus.debug(jsep);
+						                     var body = { "request": "ack" };
+						                     textroom.send({"message": body, "jsep": jsep});
+						                 },
+						                 error: function(error) {
+						                     Janus.error("WebRTC error:", error);
+						                     alert("WebRTC error... " + JSON.stringify(error));
+						                 }
+						             });
+						     }
+						 },
+						 ondataopen: function(data) {
+						     Janus.log("The DataChannel is available!");
+						     // Optional prompt for a display name to join the default room
+						 },
+						 ondata: function(data) {
+						     Janus.debug("We got data from the DataChannel! " + data);
+						     var json = JSON.parse(data);
+						     var transaction = json["transaction"];
+						     if(transactions[transaction]) {
+						         // Someone was waiting for this
+						         transactions[transaction](json);
+						         delete transactions[transaction];
+						         return;
+						     }
+						     var what = json["textroom"];
+						     // Incoming message: public or private?
+						     if(what === "message") {
+						         var msg = json["text"];
+						         console.log("Got message!!");
+						         console.log(json["text"]);
+						         msg = msg.replace(new RegExp('<', 'g'), '&lt');
+						         msg = msg.replace(new RegExp('>', 'g'), '&gt');
+						         var from = json["from"];
+						         var dateString = getDateString(json["date"]);
+						         $('#chatroom').append('<p>[' + dateString + '] <b>' + participants[from] + ':</b> ' + msg);
+						         $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
+						     } else if(what === "join") {
+						         // Somebody joined
+						         var username = json["username"];
+						         var display = json["display"];
+						         participants[username] = display ? display : username;
+						         $('#participants').html(Object.keys(participants).length.toString() + ' online');
+						         $('#chatroom').append('<p style="color: green;">[' + getDateString() + '] <i>' + participants[username] + ' se unió</i></p>');
+						         $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
+						     } else if(what === "leave") {
+						         // Somebody left
+						         var username = json["username"];
+						         var when = new Date();
+						         $('#chatroom').append('<p style="color: red;">[' + getDateString() + '] <i>' + participants[username] + ' Se fue</i></p>');
+						         $('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
+						         delete participants[username];
+						         $('#participants').html(Object.keys(participants).length.toString() + ' online');
+						     } else if(what === "destroyed") {
+						             // Room was destroyed, goodbye!
+						             Janus.warn("The room has been destroyed!");
+						     }
+						 },
+						 oncleanup: function() {
+						     Janus.log(" ::: Got a cleanup notification :::");
+						     $('#datasend').attr('disabled', true);
+						 }
+						});
+	                // Attach to Audio Bridge test plugin
+					janus.attach(
+						{
+							plugin: "janus.plugin.audiobridge",
+							success: function(pluginHandle) {
+								mixertest = pluginHandle;
+								Janus.log("Plugin attached! (" + mixertest.getPlugin() + ", id=" + mixertest.getId() + ")");
+								// Prepare the username registration
+							},
+							error: function(error) {
+								Janus.error("  -- Error attaching plugin...", error);
+								alert("Error attaching plugin... " + error);
+							},
+							consentDialog: function(on) {
+								// Check docs to see what options are for this
+								console.log("ON consentDialog");
+							},
+							onmessage: function(msg, jsep) {
+								Janus.debug(" ::: Got a message :::");
+								Janus.debug(JSON.stringify(msg));
+								var event = msg["audiobridge"];
+								Janus.debug("Event: " + event);
+								if(event != undefined && event != null) {
+									if(event === "joined") {
+										// Successfully joined, negotiate WebRTC now
+										myid = msg["id"];
+										Janus.log("Successfully joined room " + msg["room"] + " with ID " + myid);
+										
+										if(!webrtcUp && $('#init').attr("admin") != 'true') {
+											webrtcUp = true;
+											// Publish our stream as client
+											mixertest.createOffer(
+												{
+													media: { audioSend: false, videoSend: false, audio: true, video: false, data: false },	// This is an audio only room
+													success: function(jsep) {
+														Janus.debug("Got SDP!");
+														Janus.debug(jsep);
+														var publish = { "request": "configure", "muted": false };
+														mixertest.send({"message": publish, "jsep": jsep});
+													},
+													error: function(error) {
+														Janus.error("WebRTC error:", error);
+														alert("WebRTC error... " + JSON.stringify(error));
 													}
-												);
-											}*/
-											else if(!webrtcUp && $('#init').attr("admin") == 'true') {
-												webrtcUp = true;
-												// Publish our stream as admin
-												mixertest.createOffer(
-													{
-														media: { video: false},	// This is an audio only room
-														success: function(jsep) {
-															Janus.debug("Got SDP!");
-															Janus.debug(jsep);
-															var publish = { "request": "configure", "muted": false };
-															mixertest.send({"message": publish, "jsep": jsep});
-														},
-														error: function(error) {
-															Janus.error("WebRTC error:", error);
-															alert("WebRTC error... " + JSON.stringify(error));
-														}
-													});
-											}
-										}else if(event === "destroyed") {
-											// The room has been destroyed
-											Janus.warn("The room has been destroyed!");
-											alert("The room has been destroyed", function() {
-												window.location.reload();
-											});
+												});
 										}
-									}
-									if(jsep !== undefined && jsep !== null) {
-										Janus.debug("Handling SDP as well...");
-										Janus.debug(jsep);
-										mixertest.handleRemoteJsep({jsep: jsep});
-									}
-								},
-								onlocalstream: function(stream) {
-									Janus.debug(" ::: Got a local stream :::");
-									Janus.debug(JSON.stringify(stream));
-									// We're not going to attach the local audio stream
-									/*$('#audiojoin').hide();
-									$('#room').removeClass('hide').show();
-									$('#participant').removeClass('hide').html(myusername).show();*/
-									if ($('#init').attr("admin") == 'true') {
-										// Mute button
-										audioenabled = true;
-										$('#toggleaudio').click(
-											function() {
-												audioenabled = !audioenabled;
-												if(audioenabled) {
-													$('#toggleaudio').removeClass("btn-success").addClass("btn-danger");
-													$('#toggleaudio').html('<span id ="iconaudio" class="glyphicon glyphicon-volume-off" aria-hidden="true"></span>');
-													$('#toggleaudio').attr("title", "Deshabilitar Micrófono");
-												} else {
-													$('#toggleaudio').removeClass("btn-danger").addClass("btn-success");
-													$('#toggleaudio').html('<span id ="iconaudio" class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>');
-													$('#toggleaudio').attr("title", "Habilitar Micrófono");
+									/*
+									if(!webrtcUp) {
+										webrtcUp = true;
+										// Responding to the Streaming audio offer
+										mixertest.createAnswer(
+											{
+												jsep: jsep,
+												// We want recvonly audio/video
+												media: { audioSend: false, videoSend: false, audio: true, video: false, data: false},	// This is an audio only room
+												success: function(ourjsep) {
+													Janus.debug("Got SDP!");
+													Janus.debug(ourjsep);
+													var body = { "request": "configure", "muted": true };
+													mixertest.send({"message": body, "jsep": ourjsep});
+												},
+												error: function(error) {
+													Janus.error("WebRTC error:", error);
+													bootbox.alert("WebRTC error... " + JSON.stringify(error));
 												}
-												mixertest.send({message: { "request": "configure", "muted": !audioenabled }});
-											}).removeClass('hide').show();
-										}
-								},
-								onremotestream: function(stream) {
-								    console.log("Attaching Media Audio");
-									if($('#roomaudio').length === 0) {
-										$('#mixedaudio').append('<audio class="rounded centered" id="roomaudio" width="100%" height="100%" autoplay/>');
+											}
+										);
+									}*/
+									else if(!webrtcUp && $('#init').attr("admin") == 'true') {
+										webrtcUp = true;
+										// Publish our stream as admin
+										mixertest.createOffer(
+											{
+												media: { video: false},	// This is an audio only room
+												success: function(jsep) {
+													Janus.debug("Got SDP!");
+													Janus.debug(jsep);
+													var publish = { "request": "configure", "muted": false };
+													mixertest.send({"message": publish, "jsep": jsep});
+												},
+												error: function(error) {
+													Janus.error("WebRTC error:", error);
+													alert("WebRTC error... " + JSON.stringify(error));
+												}
+											});
 									}
-									attachMediaStream($('#roomaudio').get(0), stream);
-								},
-								oncleanup: function() {
-									webrtcUp = false;
-									Janus.log(" ::: Got a cleanup notification :::");
+								}else if(event === "destroyed") {
+									// The room has been destroyed
+									Janus.warn("The room has been destroyed!");
+									alert("The room has been destroyed", function() {
+										window.location.reload();
+									});
 								}
-							});
+							}
+							if(jsep !== undefined && jsep !== null) {
+								Janus.debug("Handling SDP as well...");
+								Janus.debug(jsep);
+								mixertest.handleRemoteJsep({jsep: jsep});
+							}
+						},
+						onlocalstream: function(stream) {
+							Janus.debug(" ::: Got a local stream :::");
+							Janus.debug(JSON.stringify(stream));
+							// We're not going to attach the local audio stream
+							/*$('#audiojoin').hide();
+							$('#room').removeClass('hide').show();
+							$('#participant').removeClass('hide').html(myusername).show();*/
+							if ($('#init').attr("admin") == 'true') {
+								// Mute button
+								audioenabled = true;
+								$('#toggleaudio').click(
+									function() {
+										audioenabled = !audioenabled;
+										if(audioenabled) {
+											$('#toggleaudio').removeClass("btn-success").addClass("btn-danger");
+											$('#toggleaudio').html('<span id ="iconaudio" class="glyphicon glyphicon-volume-off" aria-hidden="true"></span>');
+											$('#toggleaudio').attr("title", "Deshabilitar Micrófono");
+										} else {
+											$('#toggleaudio').removeClass("btn-danger").addClass("btn-success");
+											$('#toggleaudio').html('<span id ="iconaudio" class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>');
+											$('#toggleaudio').attr("title", "Habilitar Micrófono");
+										}
+										mixertest.send({message: { "request": "configure", "muted": !audioenabled }});
+									}).removeClass('hide').show();
+								}
+						},
+						onremotestream: function(stream) {
+						    console.log("Attaching Media Audio");
+							if($('#roomaudio').length === 0) {
+								$('#mixedaudio').append('<audio class="rounded centered" id="roomaudio" width="100%" height="100%" autoplay/>');
+							}
+							attachMediaStream($('#roomaudio').get(0), stream);
+						},
+						oncleanup: function() {
+							webrtcUp = false;
+							Janus.log(" ::: Got a cleanup notification :::");
+						}
+					});
 		        // Finish attachment Audio
 		        },
 		        error: function(error) {
