@@ -248,10 +248,15 @@ $(document).ready(function() {
 										$('#toggleaudio').click(
 											function() {
 												audioenabled = !audioenabled;
-												if(audioenabled)
-													$('#toggleaudio').html("Silenciar").removeClass("btn-success").addClass("btn-danger");
-												else
-													$('#toggleaudio').html("Desilenciar").removeClass("btn-danger").addClass("btn-success");
+												if(audioenabled) {
+													$('#toggleaudio').removeClass("btn-success").addClass("btn-danger");
+													$('#toggleaudio').html('<span id ="iconaudio" class="glyphicon glyphicon-volume-off" aria-hidden="true"></span>');
+													$('#toggleaudio').attr("title", "Deshabilitar Micrófono");
+												} else {
+													$('#toggleaudio').removeClass("btn-danger").addClass("btn-success");
+													$('#toggleaudio').html('<span id ="iconaudio" class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>');
+													$('#toggleaudio').attr("title", "Habilitar Micrófono");
+												}
 												mixertest.send({message: { "request": "configure", "muted": !audioenabled }});
 											}).removeClass('hide').show();
 										}

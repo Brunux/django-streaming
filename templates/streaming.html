@@ -10,7 +10,7 @@
 <h1 class="logo-header" id="header-data" uuid="{{ streaming.uuid }}" client="{{request.user}}">Live Video Streaming...</h1><br>
 <div class="row">
   <div class="panel panel-info col-md-8 paggind-off">
-    <div class="panel-heading">{{ streaming.title }} <button class="btn-xs btn-danger hide pull-right" autocomplete="off" id="toggleaudio">Silenciar</button></h3></div>
+    <div class="panel-heading">{{ streaming.title }} <button class="btn-xs btn-danger hide pull-right" data-toggle="tooltip" data-placement="top" title="Deshabilitar Micrófono" autocomplete="off" id="toggleaudio"><span id ="iconaudio" class="glyphicon glyphicon-volume-off" aria-hidden="true"></span></button></h3></div>
     <div class="panel-body">
       <div class="embed-responsive embed-responsive-16by9">
         {% if streaming.user == request.user %}
