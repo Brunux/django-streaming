@@ -162,111 +162,72 @@ $(document).ready(function() {
 											// Successfully joined, negotiate WebRTC now
 											myid = msg["id"];
 											Janus.log("Successfully joined room " + msg["room"] + " with ID " + myid);
-										if(!webrtcUp) {
-											webrtcUp = true;
-											// Responding to the Streaming
-											mixertest.createAnswer(
-												{
-													jsep: jsep,
-													// We want recvonly audio/video
-													media: { audioSend: false, videoSend: false, audio: true, video: false, data: false},	// This is an audio only room
-													success: function(ourjsep) {
-														Janus.debug("Got SDP!");
-														Janus.debug(ourjsep);
-														var body = { "request": "configure", "muted": true };
-														mixertest.send({"message": body, "jsep": ourjsep});
-													},
-													error: function(error) {
-														Janus.error("WebRTC error:", error);
-														bootbox.alert("WebRTC error... " + JSON.stringify(error));
-													}
-												});
-										}
-											/*// Any room participant?
-											if(msg["participants"] !== undefined && msg["participants"] !== null) {
-												var list = msg["participants"];
-												Janus.debug("Got a list of participants:");
-												Janus.debug(list);
-												for(var f in list) {
-													var id = list[f]["id"];
-													var display = list[f]["display"];
-													var muted = list[f]["muted"];
-													Janus.debug("  >> [" + id + "] " + display + " (muted=" + muted + ")");
-													if($('#rp'+id).length === 0) {
-														// Add to the participants list
-														$('#list').append('<li id="rp'+id+'" class="list-group-item">'+display+' <i class="fa fa-microphone-slash"></i></li>');
-														$('#rp'+id + ' > i').hide();
-													}
-													if(muted === true || muted === "true")
-														$('#rp'+id + ' > i').removeClass('hide').show();
-													else
-														$('#rp'+id + ' > i').hide();
-												}
-											}*/
-										} /*else if(event === "roomchanged") {
-											// The user switched to a different room
-											myid = msg["id"];
-											Janus.log("Moved to room " + msg["room"] + ", new ID: " + myid);
-											// Any room participant?
-											$('#list').empty();
-											if(msg["participants"] !== undefined && msg["participants"] !== null) {
-												var list = msg["participants"];
-												Janus.debug("Got a list of participants:");
-												Janus.debug(list);
-												for(var f in list) {
-													var id = list[f]["id"];
-													var display = list[f]["display"];
-													var muted = list[f]["muted"];
-													Janus.debug("  >> [" + id + "] " + display + " (muted=" + muted + ")");
-													if($('#rp'+id).length === 0) {
-														// Add to the participants list
-														$('#list').append('<li id="rp'+id+'" class="list-group-item">'+display+' <i class="fa fa-microphone-slash"></i></li>');
-														$('#rp'+id + ' > i').hide();
-													}
-													if(muted === true || muted === "true")
-														$('#rp'+id + ' > i').removeClass('hide').show();
-													else
-														$('#rp'+id + ' > i').hide();
-												}
+											
+											if(!webrtcUp && $('#init').attr("admin") != 'true') {
+												webrtcUp = true;
+												// Publish our stream as client
+												mixertest.createOffer(
+													{
+														media: { audioSend: false, videoSend: false, audio: true, video: false, data: false },	// This is an audio only room
+														success: function(jsep) {
+															Janus.debug("Got SDP!");
+															Janus.debug(jsep);
+															var publish = { "request": "configure", "muted": false };
+															mixertest.send({"message": publish, "jsep": jsep});
+														},
+														error: function(error) {
+															Janus.error("WebRTC error:", error);
+															alert("WebRTC error... " + JSON.stringify(error));
+														}
+													});
 											}
-										}*/ else if(event === "destroyed") {
+											/*
+											if(!webrtcUp) {
+												webrtcUp = true;
+												// Responding to the Streaming audio offer
+												mixertest.createAnswer(
+													{
+														jsep: jsep,
+														// We want recvonly audio/video
+														media: { audioSend: false, videoSend: false, audio: true, video: false, data: false},	// This is an audio only room
+														success: function(ourjsep) {
+															Janus.debug("Got SDP!");
+															Janus.debug(ourjsep);
+															var body = { "request": "configure", "muted": true };
+															mixertest.send({"message": body, "jsep": ourjsep});
+														},
+														error: function(error) {
+															Janus.error("WebRTC error:", error);
+															bootbox.alert("WebRTC error... " + JSON.stringify(error));
+														}
+													}
+												);
+											}*/
+											else if(!webrtcUp && $('#init').attr("admin") == 'true') {
+												webrtcUp = true;
+												// Publish our stream as admin
+												mixertest.createOffer(
+													{
+														media: { video: false},	// This is an audio only room
+														success: function(jsep) {
+															Janus.debug("Got SDP!");
+															Janus.debug(jsep);
+															var publish = { "request": "configure", "muted": false };
+															mixertest.send({"message": publish, "jsep": jsep});
+														},
+														error: function(error) {
+															Janus.error("WebRTC error:", error);
+															alert("WebRTC error... " + JSON.stringify(error));
+														}
+													});
+											}
+										}else if(event === "destroyed") {
 											// The room has been destroyed
 											Janus.warn("The room has been destroyed!");
 											alert("The room has been destroyed", function() {
 												window.location.reload();
 											});
-										} /*else if(event === "event") {
-											if(msg["participants"] !== undefined && msg["participants"] !== null) {
-												var list = msg["participants"];
-												Janus.debug("Got a list of participants:");
-												Janus.debug(list);
-												for(var f in list) {
-													var id = list[f]["id"];
-													var display = list[f]["display"];
-													var muted = list[f]["muted"];
-													Janus.debug("  >> [" + id + "] " + display + " (muted=" + muted + ")");
-													if($('#rp'+id).length === 0) {
-														// Add to the participants list
-														$('#list').append('<li id="rp'+id+'" class="list-group-item">'+display+' <i class="fa fa-microphone-slash"></li>');
-														$('#rp'+id + ' > i').hide();
-													}
-													if(muted === true || muted === "true")
-														$('#rp'+id + ' > i').removeClass('hide').show();
-													else
-														$('#rp'+id + ' > i').hide();
-												}
-											} else if(msg["error"] !== undefined && msg["error"] !== null) {
-												bootbox.alert(msg["error"]);
-												return;
-											}
-											// Any new feed to attach to?
-											if(msg["leaving"] !== undefined && msg["leaving"] !== null) {
-												// One of the participants has gone away?
-												var leaving = msg["leaving"];
-												Janus.log("Participant left: " + leaving + " (we have " + $('#rp'+leaving).length + " elements with ID #rp" +leaving + ")");
-												$('#rp'+leaving).remove();
-											}
-										}*/
+										}
 									}
 									if(jsep !== undefined && jsep !== null) {
 										Janus.debug("Handling SDP as well...");
@@ -281,6 +242,19 @@ $(document).ready(function() {
 									/*$('#audiojoin').hide();
 									$('#room').removeClass('hide').show();
 									$('#participant').removeClass('hide').html(myusername).show();*/
+									if ($('#init').attr("admin") == 'true') {
+										// Mute button
+										audioenabled = true;
+										$('#toggleaudio').click(
+											function() {
+												audioenabled = !audioenabled;
+												if(audioenabled)
+													$('#toggleaudio').html("Silenciar").removeClass("btn-success").addClass("btn-danger");
+												else
+													$('#toggleaudio').html("Desilenciar").removeClass("btn-danger").addClass("btn-success");
+												mixertest.send({message: { "request": "configure", "muted": !audioenabled }});
+											}).removeClass('hide').show();
+										}
 								},
 								onremotestream: function(stream) {
 								    console.log("Attaching Media Audio");
@@ -337,7 +311,9 @@ function registerUsername() {
 			return;
 		}
 		// We're in
-		$('#chatroom').css('height', ($(window).height()-420)+"px"),
+		$('#init').attr('disabled', true).unbind('click');
+		$('#init').hide();
+		$('#chatroom').css('height', ($(window).height()-540)+"px"),
 		//$('#datasend').removeAttr('disabled');
 		// Any participants already in?
 		console.log("Participants:", response.participants);
