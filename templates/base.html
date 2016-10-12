@@ -6,13 +6,12 @@
     <title>{% block title %}CompartoSkill.com Streaming web app{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap-theme.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/footer-distributed-with-address-and-phones.css' %}">
     <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href='https://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
     <script src="{% static 'js/jquery.min.js' %}"></script>
 	<script src="{% static 'js/bootstrap.min.js' %}"></script>
-    {% block header %}{% endblock %}
+{% block header %}{% endblock %}
 </head>
 <body>
 
@@ -102,50 +101,14 @@
 </div>
 
 <br>
-<footer class="footer-distributed">
-	<div class="footer-left">
-		<h3><span>By Virtuososcode</span></h3>
-		<p class="footer-links">
-			<a href="https://virtuososcode.com">Home</a>
-			·
-			<a href="https://virtuososcode.com/team">El equipo</a>
-			·
-			<a href="https://virtuososcode.com/services">Servicios</a>
-			·
-			<a href="https://virtuososcode.com/vacantes">Vacantes</a>
-		</p>
-		<div class="footer-icons">
-			<a href="#"><i class="fa fa-facebook"></i></a>
-			<a href="#"><i class="fa fa-twitter"></i></a>
-			<a href="#"><i class="fa fa-linkedin"></i></a>
-			<a href="#"><i class="fa fa-github"></i></a>
-		</div>
-		<p class="footer-company-name">Virtuososcode &copy; 2016</p>
-	</div>
-	<div class="footer-center">
-		<div>
-			<i class="fa fa-map-marker"></i>
-			<p><span>Calle Revolución #21 Col. Americana</span> Guadalajara, Jalisco</p>
-		</div>
-		<div>
-			<i class="fa fa-phone"></i>
-			<p>+521 3319441828</p>
-		</div>
-		<div>
-			<i class="fa fa-envelope"></i>
-			<p><a href="mailto:hola@virtuososcode.com">hola@virtuososcode.com</a></p>
-		</div>
-	</div>
-	<div class="footer-right">
-		<p class="footer-company-about">
-			<span>Acerca de nosotros</span>
-			Virtuososcode, somos un grupo de desarolladores <strong>fullstack</strong>, proporcionamos a nuestros clientes soluciones profesionales
-			en aplicaciones y portales web usamos tecnologías estables y de alto rendimiento como Angular, ES6, NodeJS, Django, Ruby on Rails y Bootstrap.
-		</p>
-	</div>
+<footer class ="footer">
+    <div class="container-footer text-center">
+    	<h3 class="logo"><span><small>By Virtuososcode.com</small></span></h3><p class="text-muted">Todos los derechos reservados 2016</p>
+    </div>
 </footer>
 {% block footer %}{% endblock %}
 
+<script async src='https://pepper.swat.io/embed.js?eyJwb3NpdGlvbiI6InJpZ2h0IiwiY29sb3IiOiJCOEU5ODYiLCJjdXN0b21Db2xvciI6ZmFsc2UsImljb24iOiJidWJibGUiLCJwcm9ub3VuIjoidXMiLCJsYW5ndWFnZSI6ImVzIiwiYnJhbmRlZCI6ZmFsc2UsImludHJvVGV4dCI6IkNyZWFtb3MgYXBsaWNhY2lvbmVzIGVuIGxhIG51YmUgZGUgYWx0byByZW5kaW1pZW50byBjb24gdGVjbm9sb2fDrWFzIGVzdGFibGVzIGNvbW86IEFuZ3VsYXIsIEJvb3RzdHJhcCwgRGphbmdvLCBOb2RlSlMsIFJ1Ynkgb24gUmFpbHMgeSBtw6FzLiIsImNoYW5uZWxzIjpbWyJ3aGF0c2FwcCIsIis1MjEzMzE5NDQxODI4Iiwic29jaWFsIl0sWyJzbGFjayIsInZpcnR1b3Nvc2NvZGUiLCJzb2NpYWwiXSxbInBob25lIiwiMDQ1IDMzMTk0NDE4MjgiLCJjbGFzc2ljIl0sWyJlbWFpbCIsImhvbGFAdmlydHVvc29zY29kZS5jb20iLCJjbGFzc2ljIl0sWyJ3ZWJzaXRlIiwidmlydHVvc29zY29kZS5jb20iLCJjbGFzc2ljIl1dfQ=='></script>
 {% block scripts %}{% endblock %}
 
 </body>
