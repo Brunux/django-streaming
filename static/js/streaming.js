@@ -262,7 +262,7 @@ function newRemoteFeed(id, display) {
 					remoteFeed.createAnswer(
 						{
 							jsep: jsep,
-							media: { audioSend: false, videoSend: false },	// We want recvonly audio/video
+							media: { audioSend: false, videoSend: false, audio: true, video: true },	// We want recvonly audio/video
 							success: function(jsep) {
 								Janus.debug("Got SDP!");
 								Janus.debug(jsep);
@@ -319,6 +319,14 @@ $(document).ready(function() {
 		// Creating the session
 		janus = new Janus(
 						{
+						iceServer: [
+							"stun01.sipphone.com",
+							"stun.ekiga.net",
+							"stun.fwdnet.net",
+							"stun.ideasip.com",
+							"stun.iptel.org",
+							"stun.rixtelecom.se"
+							],
 						server: server,
 						success: function() {
 						// Attach to textroom plugin
