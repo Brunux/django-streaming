@@ -3,6 +3,8 @@
 {% block header %}
   <script src="{% static 'js/janus.js' %}" ></script>
   <script src="{% static 'js/adapter.js' %}" ></script>
+  <script src="{% static 'js/spin.min.js' %}"></script>
+  <script src="{% static 'js/bootbox.min.js' %}"></script>
   <script src="{% static 'js/streaming.js' %}"></script>
 {% endblock %}
 
@@ -12,7 +14,7 @@
   <div class="panel panel-info col-md-8 paggind-off">
     <div class="panel-heading">{{ streaming.title }} <button class="btn-xs btn-danger hide pull-right" data-toggle="tooltip" data-placement="top" title="Deshabilitar Micrófono" autocomplete="off" id="toggleaudio"><span id ="iconaudio" class="glyphicon glyphicon-volume-off" aria-hidden="true"></span></button></h3></div>
     <div class="panel-body">
-      <div class="embed-responsive embed-responsive-16by9">
+      <div class="embed-responsive embed-responsive-16by9" id="screencapture">
         {% if streaming.user == request.user and request.user.is_authenticated %}
         <button type="button" admin="true" class="btn btn-danger btn-lg center-block" id="init" onclick="registerUsername();">Iniciar Streaming</button>
         {% else %}
