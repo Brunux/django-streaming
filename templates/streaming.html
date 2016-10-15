@@ -15,7 +15,7 @@
     <div class="panel-heading">{{ streaming.title }} <button class="btn-xs btn-danger hide pull-right" data-toggle="tooltip" data-placement="top" title="Deshabilitar Micrófono" autocomplete="off" id="toggleaudio"><span id ="iconaudio" class="glyphicon glyphicon-volume-off" aria-hidden="true"></span></button></h3></div>
     <div class="panel-body">
       {% if streaming.user == request.user and request.user.is_authenticated %}
-        <button type="button" admin="true" class="btn btn-danger btn-lg center-block" id="init" onclick="registerUsername();">Iniciar Streaming</button>
+        <button type="button" admin="true" class="btn btn-danger btn-lg center-block hide" id="init" onclick="registerUsername();">Iniciar Streaming</button>
       {% else %}
         <div class="alert alert-warning alert-dismissible fade in" role="alert">
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -23,7 +23,7 @@
           </button>
           <strong>Info: </strong>{{ streaming.info }}
         </div>
-        <button type="button" class="btn btn-success btn-lg center-block" id="init" onclick="registerUsername();">Unirse al Streaming</button>
+        <button type="button" class="btn btn-success btn-lg center-block hide" id="init" onclick="registerUsername();">Unirse al Streaming</button>
       {% endif %}
       <div class="embed-responsive embed-responsive-16by9" id="screencapture">
       </div>
@@ -31,7 +31,7 @@
   </div>
   <!-- Chat -->
   <div class="panel panel-default col-md-4 paggind-off pull-right">
-  <div class="panel-heading">Anfitrion: <a href="mailto:{{streaming.user.email}}">{{streaming.user}}</a><span class="badge pull-right" id="participants">0 online</span></div>
+  <div class="panel-heading">Anfitrion: <a href="mailto:{{streaming.user.email}}">{{streaming.user}}</a><span class="badge pull-right" id="participants">0 online</span><div id="mixedaudio"><!-- Audio --></div></div>
     <div class="panel-body relative" style="overflow-x: auto;" id="chatroom">
     </div>
     <div class="panel-footer">
@@ -50,9 +50,7 @@
   </div>
 </div>
 
-<div id="mixedaudio">
-  <!-- Audio -->
-</div>*Si estas teniendo algun problema con este Streaming por favor recarga la pagina.<br>
+<p>*Si estas teniendo algun problema con este Streaming por favor recarga la pagina.</p>
 <br><p>Este servicio es gratuito y se entrega sin garantía ni soporte alguno con excepción de los otorgados por la ley, al usar este servicio aceptas los términos y condiciones de uso.
   Si tienes alguna duda puedes escribir a <a href="mailto:hola@compartoskill.com">hola@compartoskill.com</a> o ingresar a nuestro canal de <a href="https://virtuososcode.slack.com/messages/general/">Slack</a></p>
 <!-- Modal -->

@@ -11,7 +11,7 @@ var textroom = null;
 var registered = false;
 var myroom = 1234;
 var myusername = null;
-let myid = randomString(12);
+var myid = null;
 var participants = {}
 var transactions = {}
 
@@ -25,13 +25,20 @@ var room = null;
 var screentest = null;
 var role = null;
 var capture = null;
-
 var videoroom = 123;
 var source = null;
-
 var spinner = null;
 
-var role = null;
+// Just an helper to generate random usernames
+function randomString(len, charSet) {
+    charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var randomString = '';
+    for (var i = 0; i < len; i++) {
+    	var randomPoz = Math.floor(Math.random() * charSet.length);
+    	randomString += charSet.substring(randomPoz,randomPoz+1);
+    }
+    return randomString;
+}
 
 function checkEnter(field, event) {
 	var theCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
@@ -42,6 +49,47 @@ function checkEnter(field, event) {
 	} else {
 		return true;
 	}
+}
+
+function sendData() {
+    if(!registered) {
+        registerUsername()
+    }
+	var data = $('#datasend').val();
+	if(data === "") {
+		alert('Escribe un mensaje a enviar...');
+		return;
+	}
+	var message = {
+		textroom: "message",
+		transaction: randomString(12),
+		room: myroom,
+ 		text: data,
+ 		whisper: false,
+	};
+	// Note: messages are always acknowledged by default. This means that you'll
+	// always receive a confirmation back that the message has been received by the
+	// server and forwarded to the recipients. If you do not want this to happen,
+	// just add an ack:false property to the message above, and server won't send
+	// you a response (meaning you just have to hope it succeeded).
+	textroom.data({
+		text: JSON.stringify(message),
+		error: function(reason) { alert(reason); },
+		success: function() { $('#datasend').val(''); }
+	});
+}
+
+// Helper to format times
+function getDateString(jsonDate) {
+	var when = new Date();
+	if(jsonDate) {
+		when = new Date(Date.parse(jsonDate));
+	}
+	var dateString =
+			("0" + when.getHours()).slice(-2) + ":" +
+			("0" + when.getMinutes()).slice(-2) + ":" +
+			("0" + when.getSeconds()).slice(-2);
+	return dateString;
 }
 
 function switchToHttps() {
@@ -110,113 +158,6 @@ function shareScreen() {
 	}});
 }
 
-function registerUsername() {
-	var username = $('#header-data').attr("client");
-	var transaction = randomString(12);
-	var register = {
-		textroom: "join",
-		transaction: transaction,
-		room: myroom,
-		username: myid,
-		display: username
-	};
-	myusername = username;
-	transactions[transaction] = function(response) {
-		if(response["textroom"] === "error") {
-			// Something went wrong
-			alert(response["error"]);
-			return;
-		}
-		// We're in
-		$('#init').attr('disabled', true).unbind('click');
-		$('#init').hide();
-		$('#chatroom').css('height', ($(window).height()-540)+"px"),
-		//$('#datasend').removeAttr('disabled');
-		// Any participants already in?
-		console.log("Participants:", response.participants);
-		if(response.participants && response.participants.length > 0) {
-			for(var i in response.participants) {
-				var p = response.participants[i];
-				participants[p.username] = p.display ? p.display : p.username;
-				$('#chatroom').append('<p style="color: green;">[' + getDateString() + '] <i>' + participants[p.username] + ' se unió</i></p>');
-				$('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
-			}
-		}
-		$('#participants').html(Object.keys(participants).length.toString() + ' online');
-	};
-	textroom.data({
-		text: JSON.stringify(register),
-		error: function(reason) {
-			alert(reason);
-		}
-	});
-	registered = true;
-	// Registering Audio
-	var register_audio = { "request": "join", "room": myroom, "display": myid };
-	mixertest.send({"message": register_audio});
-	
-	// Register Video
-	if ($('#init').attr("admin") == 'true') {
-		preShareScreen();
-	} else {
-		registervideo = { "request": "join", "room": videoroom, "ptype": "publisher", "display": myid };
-		screentest.send({"message": registervideo})
-	}
-}
-
-
-function sendData() {
-    if(!registered) {
-        registerUsername()
-    }
-	var data = $('#datasend').val();
-	if(data === "") {
-		alert('Escribe un mensaje a enviar...');
-		return;
-	}
-	var message = {
-		textroom: "message",
-		transaction: randomString(12),
-		room: myroom,
- 		text: data,
- 		whisper: false,
-	};
-	// Note: messages are always acknowledged by default. This means that you'll
-	// always receive a confirmation back that the message has been received by the
-	// server and forwarded to the recipients. If you do not want this to happen,
-	// just add an ack:false property to the message above, and server won't send
-	// you a response (meaning you just have to hope it succeeded).
-	textroom.data({
-		text: JSON.stringify(message),
-		error: function(reason) { alert(reason); },
-		success: function() { $('#datasend').val(''); }
-	});
-}
-
-// Helper to format times
-function getDateString(jsonDate) {
-	var when = new Date();
-	if(jsonDate) {
-		when = new Date(Date.parse(jsonDate));
-	}
-	var dateString =
-			("0" + when.getHours()).slice(-2) + ":" +
-			("0" + when.getMinutes()).slice(-2) + ":" +
-			("0" + when.getSeconds()).slice(-2);
-	return dateString;
-}
-
-// Just an helper to generate random usernames
-function randomString(len, charSet) {
-    charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var randomString = '';
-    for (var i = 0; i < len; i++) {
-    	var randomPoz = Math.floor(Math.random() * charSet.length);
-    	randomString += charSet.substring(randomPoz,randomPoz+1);
-    }
-    return randomString;
-}
-
 function newRemoteFeed(id, display) {
 	// A new feed has been published, create a new plugin handle and attach to it as a listener
 	source = id;
@@ -283,7 +224,7 @@ function newRemoteFeed(id, display) {
 				if($('#screenvideo').length === 0) {
 					// No remote video yet
 					$('#screencapture').append('<video class="rounded centered" id="waitingvideo" width="100%" height="100%" />');
-					$('#screencapture').append('<video class="rounded centered hide" id="screenvideo" width="100%" height="100%" autoplay muted="unmuted"/>');
+					$('#screencapture').append('<video class="rounded centered hide" id="screenvideo" width="100%" height="100%" autoplay muted="unmuted" controls/>');
 				}
 				// Show the video, hide the spinner and show the resolution when we get a playing event
 				$("#screenvideo").bind("playing", function () {
@@ -305,7 +246,68 @@ function newRemoteFeed(id, display) {
 		});
 }
 
+function registerUsername() {
+	myid = randomString(12);
+	var username = $('#header-data').attr("client") + " (" + myid + ")";
+	var transaction = randomString(12);
+	var register = {
+		textroom: "join",
+		transaction: transaction,
+		room: myroom,
+		username: myid,
+		display: username
+	};
+	myusername = username;
+	transactions[transaction] = function(response) {
+		if(response["textroom"] === "error") {
+			// Something went wrong
+			alert(response["error"]);
+			return;
+		}
+		// We're in
+		$('#init').attr('disabled', true).unbind('click');
+		$('#init').hide();
+		$('#chatroom').css('height', ($(window).height()-540)+"px"),
+		//$('#datasend').removeAttr('disabled');
+		// Any participants already in?
+		console.log("Participants:", response.participants);
+		if(response.participants && response.participants.length > 0) {
+			for(var i in response.participants) {
+				var p = response.participants[i];
+				participants[p.username] = p.display ? p.display : p.username;
+				$('#chatroom').append('<p style="color: green;">[' + getDateString() + '] <i>' + participants[p.username] + ' se unió</i></p>');
+				$('#chatroom').get(0).scrollTop = $('#chatroom').get(0).scrollHeight;
+			}
+		}
+		$('#participants').html(Object.keys(participants).length.toString() + ' online');
+	};
+	textroom.data({
+		text: JSON.stringify(register),
+		error: function(reason) {
+			alert(reason);
+		}
+	});
+	registered = true;
+	// Registering Audio
+	var register_audio = { "request": "join", "room": myroom, "display": username };
+	mixertest.send({"message": register_audio});
+	
+	// Register Video
+	if ($('#init').attr("admin") == 'true') {
+		preShareScreen();
+	} else {
+		registervideo = { "request": "join", "room": videoroom, "ptype": "publisher", "display": username };
+		screentest.send({"message": registervideo})
+	}
+}
+
 $(document).ready(function() {
+	// Prepare the username registration
+	if ($('#init').attr("admin") == 'true') {
+		role = "publisher";
+	} else {
+		role = "listener";
+	}
 	// Initialize the library (all console debuggers enabled)
 	Janus.init({debug: "all", callback: function() {
 		// Use a button to start the demo
@@ -320,12 +322,12 @@ $(document).ready(function() {
 		janus = new Janus(
 						{
 						iceServer: [
-							"stun01.sipphone.com",
-							"stun.ekiga.net",
-							"stun.fwdnet.net",
-							"stun.ideasip.com",
-							"stun.iptel.org",
-							"stun.rixtelecom.se"
+							{"url": "stun01.sipphone.com"},
+							{"url": "stun.ekiga.net"},
+							{"url": "stun.fwdnet.net"},
+							{"url": "stun.ideasip.com"},
+							{"url": "stun.iptel.org"},
+							{"url": "stun.rixtelecom.se"}
 							],
 						server: server,
 						success: function() {
@@ -349,6 +351,11 @@ $(document).ready(function() {
 						 },
 						 webrtcState: function(on) {
 						     Janus.log("Janus says our WebRTC PeerConnection is " + (on ? "up" : "down") + " now");
+						     if(on) {
+						     	$('#init').removeClass('hide').show();
+						     } else {
+						     	$('#screencapture').html('<h3>Algo salio mal, por favor recarga la pagina</h3>')
+						     }
 						 },
 						 onmessage: function(msg, jsep) {
 						     Janus.debug(" ::: Got a message :::");
@@ -555,10 +562,10 @@ $(document).ready(function() {
 						},
 						onremotestream: function(stream) {
 						    console.log("Attaching Media Audio");
-							if($('#roomaudio').length === 0) {
-								$('#mixedaudio').append('<audio class="rounded centered" id="roomaudio" width="100%" height="100%" autoplay/>');
+							if($('#roomaudio').length === 0 && role === "listener") {
+								$('#mixedaudio').append('<br><audio controls class="rounded centered center-block" id="roomaudio" width="100%" height="100%" autoplay/>');
+								attachMediaStream($('#roomaudio').get(0), stream);
 							}
-							attachMediaStream($('#roomaudio').get(0), stream);
 						},
 						oncleanup: function() {
 							webrtcUp = false;
@@ -573,12 +580,6 @@ $(document).ready(function() {
 								success: function(pluginHandle) {
 									screentest = pluginHandle;
 									Janus.log("Plugin attached! (" + screentest.getPlugin() + ", id=" + screentest.getId() + ")");
-									// Prepare the username registration
-									if ($('#init').attr("admin") == 'true') {
-										role = "publisher";
-									} else {
-										role = "listener";
-									}
 								},
 								error: function(error) {
 									Janus.error("  -- Error attaching plugin...", error);

@@ -23,4 +23,4 @@ if settings.DEBUG:
     urlpatterns += [
         url(r"^media/(?P<path>.*)$", serve, {'document_root': settings.MEDIA_ROOT,}),
         url(r"^janus/(?P<url>.*)$", csrf_exempt(HttpProxy.as_view(base_url='https://janus.conf.meetecho.com/janus',  rewrite=False))),
-        ]
+        ] # https://104.236.153.69:8889/janus/
