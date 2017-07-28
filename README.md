@@ -4,7 +4,7 @@ Virtuososcode Streaming Web Application
 ## Instructions
 Clone repo
 ``` bash
-    $ git clone https://github.com/Brunux/vc-streaming-app.git; cd vc-streaming-app
+    $ git clone https://github.com/Brunux/django-streaming.git; cd django-streaming
 ```
 
 Install python-2.7 Virtual Environment tool
